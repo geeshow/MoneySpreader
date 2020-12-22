@@ -10,10 +10,17 @@ import javax.persistence.Entity;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+public class KakaoUser extends BaseEntity {
 
     // 잔액
     @Column(nullable = false)
     private Long balance;
 
+    public void withraw(Long amount) {
+        // TODO 출금처리
+    }
+
+    public void deposit(Long amount) {
+        // TODO 입금처리
+    }
 }

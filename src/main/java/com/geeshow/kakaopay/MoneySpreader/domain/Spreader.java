@@ -1,13 +1,13 @@
 package com.geeshow.kakaopay.MoneySpreader.domain;
 
+import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
+import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
+import com.geeshow.kakaopay.MoneySpreader.exception.NotRemainTicket;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -24,17 +24,39 @@ public class Spreader extends BaseEntity {
     @Column(nullable = false)
     private Long amount;
 
-    // receiver number
+    // spreading or receiver number
     @Column(nullable = false)
-    private Integer receiver;
-
-    // Room ID
-    @Column(nullable = false)
-    private String roomId;
+    private Integer ticketCount;
 
     // Spreader User ID
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "roomuser_id")
+    private RoomUser roomUser;
 
+    // Receiver Users
+    @OneToMany(mappedBy = "spreader", cascade = CascadeType.PERSIST)
+    @Builder.Default
+    List<SpreaderTicket> spreaderTickets = new ArrayList<>();
+
+    public void registeTickets(TicketGenerator<Ticket> ticketGenerator) {
+        ticketGenerator.generate(getAmount(), getTicketCount()).stream()
+                .forEach(ticket -> {
+                    addSpreaderTicket(ticket.getAmount());
+                });
+    }
+
+    private void addSpreaderTicket(long amount) {
+        spreaderTickets.add(
+                SpreaderTicket.builder()
+                        .amount(amount)
+                        .build()
+        );
+    }
+
+    public SpreaderTicket findOneNotReceive() {
+        return getSpreaderTickets().stream()
+                .filter(SpreaderTicket::isReceived)
+                .findFirst()
+                .orElseThrow(() -> new NotRemainTicket(token));
+    }
 }
