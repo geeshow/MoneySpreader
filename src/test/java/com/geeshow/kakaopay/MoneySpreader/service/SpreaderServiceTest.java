@@ -37,15 +37,16 @@ class SpreaderServiceTest {
     private RoomUserRepository roomUserRepository;
 
     private long _USER_ID;
-    private String _ROOM_ID;
+    private String _ROOM_ID = "X-ROOM-ID-10";
 
     @BeforeEach
     void setUp() {
-        _ROOM_ID = "X-ROOM-ID-10";
 
+        // 뿌리기 사용자 등록
         KakaoUser spreader = kakaoUserRepository.save(KakaoUser.builder().balance(1000000L).build());
         roomUserRepository.save(RoomUser.builder().kakaoUser(spreader).roomId(_ROOM_ID).build());
 
+        // 받는 사용자 등록
         IntStream.range(0, 3).forEach(num -> {
             roomUserRepository.save(RoomUser.builder().kakaoUser(
                     kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
