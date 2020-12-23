@@ -21,9 +21,7 @@ public class SpreaderTicket extends BaseEntity {
     private Boolean received;
 
     // Receiver User
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private KakaoUser kakaoUser;
+    @Column private Long receiverUserId;
 
     // Spreader User ID
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,13 +29,12 @@ public class SpreaderTicket extends BaseEntity {
     private Spreader spreader;
 
     public void receiveMoney(KakaoUser receiver) {
-        setKakaoUser(receiver);
-        setReceived(true);
-        kakaoUser.deposit(getAmount());
+        setReceiverUserId(receiver.getId());
+        receiver.deposit(getAmount());
     }
 
     public boolean isReceived() {
-        return received == true;
+        return receiverUserId != null;
     }
 
 }

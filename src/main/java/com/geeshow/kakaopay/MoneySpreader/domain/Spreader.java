@@ -24,17 +24,18 @@ public class Spreader extends BaseEntity {
     @Column(nullable = false)
     private Long amount;
 
+    // room number
+    @Column private String roomNumber;
+
+    // spreader user id
+    @Column private Long spreaderUserId;
+
     // spreading or receiver number
     @Column(nullable = false)
     private Integer ticketCount;
 
-    // Spreader User ID
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roomuser_id")
-    private RoomUser roomUser;
-
     // Receiver Users
-    @OneToMany(mappedBy = "spreader", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "spreader", cascade = CascadeType.ALL)
     @Builder.Default
     List<SpreaderTicket> spreaderTickets = new ArrayList<>();
 
@@ -46,11 +47,12 @@ public class Spreader extends BaseEntity {
     }
 
     private void addSpreaderTicket(long amount) {
-        spreaderTickets.add(
-                SpreaderTicket.builder()
-                        .amount(amount)
-                        .build()
-        );
+        SpreaderTicket ticket = SpreaderTicket.builder()
+                .amount(amount)
+                .received(false)
+                .build();
+        spreaderTickets.add(ticket);
+        ticket.setSpreader(this);
     }
 
     public SpreaderTicket findOneNotReceive() {

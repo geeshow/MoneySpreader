@@ -16,11 +16,13 @@ public class KakaoUser extends BaseEntity {
     @Column(nullable = false)
     private Long balance;
 
-    public void withraw(Long amount) {
-        // TODO 출금처리
+    public void withdraw(Long amount) {
+        this.balance -= amount;
+        System.out.println("출금! " + amount);
     }
 
     public void deposit(Long amount) {
-        // TODO 입금처리
+        this.balance += amount;
+        System.out.println("입금! " + amount);
     }
 }

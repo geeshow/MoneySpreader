@@ -21,8 +21,6 @@ public class RandomTicketGenerator implements TicketGenerator<Ticket> {
     @Override
     public ArrayList<Ticket> generate(long amount, int ticketCount) {
 
-        if (amount < ticketCount) throw new NotEnoughSpreadAmount(amount, ticketCount);
-
         long leftAmount = amount - ticketCount; // 최소 할당 금액을 뺀 후 분배 한다.
         ArrayList<Ticket> tickets = new ArrayList<>();
 
