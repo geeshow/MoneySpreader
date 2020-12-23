@@ -1,18 +1,15 @@
 package com.geeshow.kakaopay.MoneySpreader.domain;
 
-import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
-import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
 import com.geeshow.kakaopay.MoneySpreader.exception.NotRemainTicket;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -55,17 +52,21 @@ public class Spreader extends BaseEntity {
     }
 
     private void addSpreaderTicket(long amount) {
-        SpreaderTicket ticket = SpreaderTicket.builder()
-                .amount(amount)
-                .received(false)
-                .build();
+        SpreaderTicket ticket = SpreaderTicket.builder().amount(amount).build();
         spreaderTickets.add(ticket);
         ticket.setSpreader(this);
     }
 
     public boolean isExpired() {
-
         return getExpiredDate().isBefore(LocalDateTime.now());
+    }
+
+    public Long getReceiptAmount() {
+        return 123L;
+//        return spreaderTickets.stream()
+//                .filter(spreaderTicket -> Optional.ofNullable(spreaderTicket.getReceiverUserId()).orElse(0L) > 0)
+//                .map(SpreaderTicket::getAmount)
+//                .reduce(0L, Long::sum);
     }
 
     public SpreaderTicket findOneNotReceive() {

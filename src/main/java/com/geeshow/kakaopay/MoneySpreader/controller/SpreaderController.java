@@ -1,6 +1,8 @@
 package com.geeshow.kakaopay.MoneySpreader.controller;
 
+import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
+import com.geeshow.kakaopay.MoneySpreader.mapper.SpreaderMapper;
 import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
@@ -23,6 +25,7 @@ import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponsePost;
 public class SpreaderController {
 
     private final SpreaderService spreaderService;
+    private final SpreaderMapper spreaderMapper;
 
     @PostMapping
     public ResponseEntity<ResponsePost> spread(
@@ -39,20 +42,26 @@ public class SpreaderController {
                         .token(token)
                         .build()
                         .add(linkTo(SpreaderController.class).withSelfRel())
-                        .add(linkTo(methodOn(SpreaderController.class).readSpread(token, userId)).withRel("read"))
+                        .add(linkTo(methodOn(SpreaderController.class).read(token, userId)).withRel("read"))
                         .add(Link.of("/docs/index.html#spreader").withRel("profile"));
 
         return ResponseEntity.created(
-                linkTo(methodOn(SpreaderController.class).readSpread(token, userId)).slash(token).toUri())
+                linkTo(methodOn(SpreaderController.class).read(token, userId)).slash(token).toUri())
                 .body(responsePost);
     }
 
 
     @GetMapping("/{token}")
-    public ResponseEntity<ResponsePost> readSpread(
+    public ResponseEntity<SpreaderDto.ReadDto> read(
             @PathVariable String token, @RequestHeader("X-USER-ID") @Positive int userId) {
 
+        Spreader spreader = spreaderService.read(token, userId);
+        SpreaderDto.ReadDto readDto = spreaderMapper.toDto(spreader);
 
-        return ResponseEntity.ok(null);
+        readDto.add(linkTo(methodOn(SpreaderController.class).read(token, userId)).withSelfRel())
+                .add(linkTo(SpreaderController.class).withRel("spreader"))
+//                .add(linkTo(methodOn(SpreaderController.class).receive(token, userId, "roomId")).withRel("receiving"))
+                .add(Link.of("/docs/index.html#read").withRel("profile"));
+        return ResponseEntity.ok(readDto);
     }
 }

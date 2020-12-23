@@ -7,8 +7,8 @@ import javax.validation.constraints.Positive;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpreaderDto {
     @Getter
     @Builder
@@ -36,7 +36,8 @@ public class SpreaderDto {
     @Setter
     @Builder
     @AllArgsConstructor
-    public static class ResponseGet extends RepresentationModel<ResponseGet> {
+    public static class ReadDto extends RepresentationModel<ReadDto>
+            implements Serializable {
         private LocalDateTime spreadDatetime;
         private Long spreadAmount;
         private Long receiptAmount;

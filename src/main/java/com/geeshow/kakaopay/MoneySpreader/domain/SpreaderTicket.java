@@ -16,10 +16,6 @@ public class SpreaderTicket extends BaseEntity {
     @Column(nullable = false)
     private Long amount;
 
-    // 할당 여부
-    @Column(nullable = false)
-    private Boolean received;
-
     // Receiver User
     @Column private Long receiverUserId;
 

@@ -83,9 +83,9 @@ class SpreaderServiceTest {
         assertThat(spreader.getSpreaderTickets().get(0).getAmount()).isGreaterThan(0);
         assertThat(spreader.getSpreaderTickets().get(1).getAmount()).isGreaterThan(0);
         assertThat(spreader.getSpreaderTickets().get(2).getAmount()).isGreaterThan(0);
-        assertThat(spreader.getSpreaderTickets().get(0).getReceived()).isFalse();
-        assertThat(spreader.getSpreaderTickets().get(1).getReceived()).isFalse();
-        assertThat(spreader.getSpreaderTickets().get(2).getReceived()).isFalse();
+        assertThat(spreader.getSpreaderTickets().get(0).isReceived()).isFalse();
+        assertThat(spreader.getSpreaderTickets().get(1).isReceived()).isFalse();
+        assertThat(spreader.getSpreaderTickets().get(2).isReceived()).isFalse();
     }
 
 
