@@ -1,15 +1,18 @@
 package com.geeshow.kakaopay.MoneySpreader.service;
 
+import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
 import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
 import com.geeshow.kakaopay.MoneySpreader.exception.ExceedSpreadTicketCount;
+import com.geeshow.kakaopay.MoneySpreader.exception.ExpiredReadSpreader;
 import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundKakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundRoom;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
+import com.geeshow.kakaopay.MoneySpreader.utils.token.SecureTokenGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -70,11 +73,12 @@ class SpreaderServiceTest {
                 .orElseThrow(() -> new AssertionError("뿌리기 조회 오류"));
 
         //then
-        assertThat(token.length()).isEqualTo(3);
+        assertThat(token.length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
         assertThat(spreader.getAmount()).isEqualTo(amount);
         assertThat(spreader.getRoomNumber()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
         assertThat(spreader.getTicketCount()).isEqualTo(ticketCount);
+        assertThat(spreader.getExpiredDate()).isAfter(LocalDateTime.now());
         assertThat(spreader.getSpreaderTickets().size()).isEqualTo(spreader.getTicketCount());
         assertThat(spreader.getSpreaderTickets().get(0).getAmount()).isGreaterThan(0);
         assertThat(spreader.getSpreaderTickets().get(1).getAmount()).isGreaterThan(0);
@@ -104,7 +108,7 @@ class SpreaderServiceTest {
                 .orElseThrow(() -> new AssertionError("뿌리기 조회 오류"));
 
         //then
-        assertThat(token.length()).isEqualTo(3);
+        assertThat(token.length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
         assertThat(spreader.getAmount()).isEqualTo(amount);
         assertThat(spreader.getRoomNumber()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
@@ -171,6 +175,7 @@ class SpreaderServiceTest {
         //then
         assertThat(message).contains("존재하지");
     }
+
     @Test
     @DisplayName("뿌리기 오류 테스트 - 뿌리기 건수 초과")
     public void setSpreaderExceedSpreadTicketCount() {
@@ -185,5 +190,58 @@ class SpreaderServiceTest {
 
         //then
         assertThat(message).contains("건수 초과");
+    }
+
+    @Test
+    @DisplayName("뿌리기 조회 테스트")
+    public void readSpreaderTest() {
+        //given
+        long amount = 10000;
+        int ticketCount = 3;
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount);
+
+        //when
+        Spreader spreader = spreaderService.read(token, _USER_ID);
+
+        //then
+        assertThat(spreader.getToken().length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
+        assertThat(spreader.getAmount()).isGreaterThan(0L);
+        assertThat(spreader.getRoomNumber()).isEqualTo(_ROOM_ID);
+        assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
+        assertThat(spreader.getTicketCount()).isGreaterThan(0);
+        assertThat(spreader.getExpiredDate()).isAfter(LocalDateTime.now());
+        assertThat(spreader.getSpreaderTickets().size()).isEqualTo(spreader.getTicketCount());
+        assertThat(spreader.getSpreaderTickets().get(0).getAmount()).isGreaterThan(0);
+        assertThat(spreader.getSpreaderTickets().get(1).getAmount()).isGreaterThan(0);
+        assertThat(spreader.getSpreaderTickets().get(2).getAmount()).isGreaterThan(0);
+        assertThat(spreader.getSpreaderTickets().stream()
+                .map(SpreaderTicket::getAmount)
+                .reduce(0L, Long::sum))
+                .isEqualTo(spreader.getAmount());
+    }
+
+    @Test
+    @DisplayName("뿌리기 조회 오류 테스트 - 뿌리기 조회 기간 초과")
+    public void readExpiredSpreader() {
+        //given
+
+        //when
+        Spreader spreader = Spreader.builder()
+                .roomNumber("TEST-SPREADER-READ")
+                .spreaderUserId(_USER_ID)
+                .amount(10000L)
+                .ticketCount(4)
+                .expiredDate(LocalDateTime.now().minusDays(SpreaderConstant.PERIOD_OF_EXPIRE_SPREAD))
+                .token(
+                        SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE)
+                )
+                .build();
+        spreaderRepository.save(spreader);
+
+        //then
+        ExpiredReadSpreader exception = assertThrows(ExpiredReadSpreader.class
+                , ()-> spreaderService.read(spreader.getToken(), _USER_ID));
+        String message = exception.getMessage();
+        assertThat(message).contains("만료");
     }
 }

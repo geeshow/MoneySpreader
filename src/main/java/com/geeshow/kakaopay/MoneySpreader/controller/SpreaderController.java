@@ -1,5 +1,6 @@
 package com.geeshow.kakaopay.MoneySpreader.controller;
 
+import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
 import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
@@ -13,8 +14,7 @@ import javax.validation.constraints.Positive;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.Request;
-import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.Response;
+import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponsePost;
 
 @RestController
 @RequestMapping("/v1/spreader")
@@ -25,17 +25,17 @@ public class SpreaderController {
     private final SpreaderService spreaderService;
 
     @PostMapping
-    public ResponseEntity<Response> spread(
+    public ResponseEntity<ResponsePost> spread(
             @RequestHeader("X-USER-ID") @Positive int userId,
             @RequestHeader("X-ROOM-ID") @NotBlank String roomID,
-            @RequestBody @Valid Request request) {
+            @RequestBody @Valid SpreaderDto.RequestPost requestPost) {
 
         String token = spreaderService.spread(
-                    roomID, userId, request.getAmount(), request.getNumber()
+                    roomID, userId, requestPost.getAmount(), requestPost.getNumber()
         );
 
-        Response response =
-                Response.builder()
+        ResponsePost responsePost =
+                ResponsePost.builder()
                         .token(token)
                         .build()
                         .add(linkTo(SpreaderController.class).withSelfRel())
@@ -44,12 +44,12 @@ public class SpreaderController {
 
         return ResponseEntity.created(
                 linkTo(methodOn(SpreaderController.class).readSpread(token, userId)).slash(token).toUri())
-                .body(response);
+                .body(responsePost);
     }
 
 
     @GetMapping("/{token}")
-    public ResponseEntity<Response> readSpread(
+    public ResponseEntity<ResponsePost> readSpread(
             @PathVariable String token, @RequestHeader("X-USER-ID") @Positive int userId) {
 
 

@@ -1,14 +1,12 @@
 package com.geeshow.kakaopay.MoneySpreader.service;
 
 import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
-import com.geeshow.kakaopay.MoneySpreader.exception.ExceedSpreadTicketCount;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotEnoughSpreadAmount;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundRoom;
+import com.geeshow.kakaopay.MoneySpreader.exception.*;
+import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.RandomTicketGenerator;
 import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundKakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
@@ -17,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Service
@@ -44,6 +43,7 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .spreaderUserId(kakaoUser.getId())
                 .amount(amount)
                 .ticketCount(ticketCount)
+                .expiredDate(LocalDateTime.now().plusDays(SpreaderConstant.PERIOD_OF_EXPIRE_SPREAD))
                 .token(
                         SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE)
                 )
@@ -75,5 +75,20 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         if (amount < ticketCount)
             throw new NotEnoughSpreadAmount(amount, ticketCount);
+    }
+
+    @Override
+    public Spreader read(String token, long userId) {
+
+        Spreader spreader = spreaderRepository.findByTokenAndSpreaderUserId(token, userId)
+                .orElseThrow(() -> new NotFoundSpreader(token, userId));
+
+        if ( spreader.isExpired() ) {
+            throw new ExpiredReadSpreader(
+                    SpreaderDateUtils.parseToDateString(spreader.getExpiredDate())
+            );
+        }
+
+        return spreader;
     }
 }

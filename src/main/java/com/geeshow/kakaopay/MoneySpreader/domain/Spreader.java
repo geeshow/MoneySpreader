@@ -1,11 +1,16 @@
 package com.geeshow.kakaopay.MoneySpreader.domain;
 
+import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
+import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
 import com.geeshow.kakaopay.MoneySpreader.exception.NotRemainTicket;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +39,9 @@ public class Spreader extends BaseEntity {
     @Column(nullable = false)
     private Integer ticketCount;
 
+    @Column(nullable = false)
+    private LocalDateTime expiredDate;
+
     // Receiver Users
     @OneToMany(mappedBy = "spreader", cascade = CascadeType.ALL)
     @Builder.Default
@@ -53,6 +61,11 @@ public class Spreader extends BaseEntity {
                 .build();
         spreaderTickets.add(ticket);
         ticket.setSpreader(this);
+    }
+
+    public boolean isExpired() {
+
+        return getExpiredDate().isBefore(LocalDateTime.now());
     }
 
     public SpreaderTicket findOneNotReceive() {

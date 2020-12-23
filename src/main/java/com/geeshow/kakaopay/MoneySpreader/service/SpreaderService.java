@@ -1,5 +1,7 @@
 package com.geeshow.kakaopay.MoneySpreader.service;
 
+import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
+
 public interface SpreaderService {
     /**
      * 대화방에 돈 뿌리기
@@ -11,4 +13,13 @@ public interface SpreaderService {
      * @return 뿌리기 token
      */
     String spread(String roomId, long userId, long amount, int ticketCount);
+
+    /**
+     * 등록된 뿌리기 조회
+     *
+     * @param token 뿌리기 token
+     * @param userId 사용자 ID
+     * @return 뿌리기 현재 상태
+     */
+    Spreader read(String token, long userId);
 }

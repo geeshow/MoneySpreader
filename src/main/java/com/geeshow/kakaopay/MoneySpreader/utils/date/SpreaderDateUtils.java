@@ -1,6 +1,7 @@
 package com.geeshow.kakaopay.MoneySpreader.utils.date;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 public class SpreaderDateUtils {
@@ -40,6 +41,13 @@ public class SpreaderDateUtils {
         return result.intValue();
     }
 
+    public static int getNumberOfDays(LocalDateTime from, LocalDateTime to) {
+        return getNumberOfDays(
+                parseToDateString(from.toLocalDate()),
+                parseToDateString(to.toLocalDate())
+        );
+    }
+
     /**
      * 두 날짜의 일수 차이를 계산.
      * 양편으로 계산 함. (ex. from 20190202, to 20190203 -> result 2)
@@ -75,5 +83,14 @@ public class SpreaderDateUtils {
         buf.append(dayValue);
 
         return buf.toString();
+    }
+
+    /**
+     * LocalDateTime의 날짜를 String으로 변환
+     * @param localDateTime
+     * @return 날짜형식의 String
+     */
+    public static String parseToDateString(LocalDateTime localDateTime) {
+        return parseToDateString(localDateTime.toLocalDate());
     }
 }

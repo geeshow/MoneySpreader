@@ -5,8 +5,6 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
-import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
-import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,9 +25,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.junit.jupiter.api.Assertions.*;
-import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.Request;
-import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.Response;
+import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.RequestPost;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -76,7 +72,7 @@ class SpreaderControllerTest {
     @DisplayName("뿌리기 등록 테스트")
     void spreadConCheckToken() throws Exception {
         // Given
-        Request request = Request.builder()
+        RequestPost requestPost = RequestPost.builder()
                 .amount(20000)
                 .number(3)
                 .build();
@@ -89,7 +85,7 @@ class SpreaderControllerTest {
                                 .header("X-ROOM-ID", _ROOM_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaTypes.HAL_JSON)
-                                .content(objectMapper.writeValueAsString(request)));
+                                .content(objectMapper.writeValueAsString(requestPost)));
         // Then
         actions
                 .andDo(print())
