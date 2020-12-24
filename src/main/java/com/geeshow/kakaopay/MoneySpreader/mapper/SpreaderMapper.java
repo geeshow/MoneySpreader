@@ -2,7 +2,6 @@ package com.geeshow.kakaopay.MoneySpreader.mapper;
 
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseRead;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

@@ -14,9 +14,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
+import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseSpread;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseSpread;
 
 @RestController
 @RequestMapping("/v1/spreader")

@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Positive;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 

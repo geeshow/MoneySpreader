@@ -2,10 +2,12 @@ package com.geeshow.kakaopay.MoneySpreader.domain;
 
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotRemainTicketException;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

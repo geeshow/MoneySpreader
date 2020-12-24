@@ -2,7 +2,7 @@ package com.geeshow.kakaopay.MoneySpreader.utils.ticket;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import java.util.Random;
 
 @Getter
