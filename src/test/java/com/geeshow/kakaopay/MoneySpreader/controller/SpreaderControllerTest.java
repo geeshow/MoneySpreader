@@ -26,7 +26,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.RequestPost;
+import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.RequestSpread;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -78,7 +78,7 @@ class SpreaderControllerTest {
     @DisplayName("뿌리기 등록 테스트")
     void spreadConCheckToken() throws Exception {
         // Given
-        RequestPost requestPost = RequestPost.builder()
+        RequestSpread requestSpread = RequestSpread.builder()
                 .amount(20000)
                 .number(3)
                 .build();
@@ -91,7 +91,7 @@ class SpreaderControllerTest {
                                 .header("X-ROOM-ID", _ROOM_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaTypes.HAL_JSON)
-                                .content(objectMapper.writeValueAsString(requestPost)));
+                                .content(objectMapper.writeValueAsString(requestSpread)));
         // Then
         actions
                 .andDo(print())

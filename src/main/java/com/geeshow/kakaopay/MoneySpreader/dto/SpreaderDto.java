@@ -14,7 +14,7 @@ public class SpreaderDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class RequestPost {
+    public static class RequestSpread {
 
         @Positive(message = "뿌리기 금액 오류. 양수로 입력해야 합니다.")
         private long amount;
@@ -27,7 +27,7 @@ public class SpreaderDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class ResponsePost extends RepresentationModel<ResponsePost> {
+    public static class ResponseSpread extends RepresentationModel<ResponseSpread> {
 
         private String token;
     }
@@ -36,11 +36,19 @@ public class SpreaderDto {
     @Setter
     @Builder
     @AllArgsConstructor
-    public static class ReadDto extends RepresentationModel<ReadDto>
-            implements Serializable {
+    public static class ResponseRead extends RepresentationModel<ResponseRead> {
         private LocalDateTime spreadDatetime;
         private Long spreadAmount;
         private Long receiptAmount;
-        private List<SpreaderTicketDto.ResponseGet> receipts;
+        private List<TicketDto> receipts;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class TicketDto extends RepresentationModel<TicketDto> {
+            private Long userId;
+            private Long amount;
+        }
     }
 }
