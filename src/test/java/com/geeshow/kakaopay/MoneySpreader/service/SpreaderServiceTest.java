@@ -75,7 +75,7 @@ class SpreaderServiceTest {
         //then
         assertThat(token.length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
         assertThat(spreader.getAmount()).isEqualTo(amount);
-        assertThat(spreader.getRoomNumber()).isEqualTo(_ROOM_ID);
+        assertThat(spreader.getRoomId()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
         assertThat(spreader.getTicketCount()).isEqualTo(ticketCount);
         assertThat(spreader.getExpiredDate()).isAfter(LocalDateTime.now());
@@ -110,7 +110,7 @@ class SpreaderServiceTest {
         //then
         assertThat(token.length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
         assertThat(spreader.getAmount()).isEqualTo(amount);
-        assertThat(spreader.getRoomNumber()).isEqualTo(_ROOM_ID);
+        assertThat(spreader.getRoomId()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
         assertThat(spreader.getTicketCount()).isEqualTo(ticketCount);
         assertThat(spreader.getSpreaderTickets().size()).isEqualTo(spreader.getTicketCount());
@@ -206,7 +206,7 @@ class SpreaderServiceTest {
         //then
         assertThat(spreader.getToken().length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
         assertThat(spreader.getAmount()).isGreaterThan(0L);
-        assertThat(spreader.getRoomNumber()).isEqualTo(_ROOM_ID);
+        assertThat(spreader.getRoomId()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
         assertThat(spreader.getTicketCount()).isGreaterThan(0);
         assertThat(spreader.getExpiredDate()).isAfter(LocalDateTime.now());
@@ -227,7 +227,7 @@ class SpreaderServiceTest {
 
         //when
         Spreader spreader = Spreader.builder()
-                .roomNumber("TEST-SPREADER-READ")
+                .roomId("TEST-SPREADER-READ")
                 .spreaderUserId(_USER_ID)
                 .amount(10000L)
                 .ticketCount(4)

@@ -39,7 +39,7 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         // 뿌리기 생성
         Spreader spreader = Spreader.builder()
-                .roomNumber(roomId)
+                .roomId(roomId)
                 .spreaderUserId(kakaoUser.getId())
                 .amount(amount)
                 .ticketCount(ticketCount)
@@ -49,13 +49,13 @@ public class SpreaderServiceImpl implements SpreaderService {
                 )
                 .build();
 
-        // 뿌리기 티켓 생성
+        // 뿌리기 티켓 생성 및 등록
         spreader.registeTickets(
                 RandomTicketGenerator.builder()
-                .amount(amount)
-                .count(ticketCount)
-                .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
-                .build()
+                    .amount(amount)
+                    .count(ticketCount)
+                    .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
+                    .build()
         );
 
         return spreaderRepository.save(spreader);
@@ -104,7 +104,12 @@ public class SpreaderServiceImpl implements SpreaderService {
         // 사용자 & 대화방 존재 체크
         checkUserInRoom(roomId, userId);
 
-        Spreader spreader = spreaderRepository.findByTokenAndSpreaderUserId(token, userId)
+        // 뿌리기 조회
+
+        // 수취 여부 확인
+
+        // 뿌리기 당사자 여부 확인
+        Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
                 .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
 
         // 대화방 사용자 목록

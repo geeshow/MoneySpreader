@@ -26,7 +26,7 @@ public class Spreader extends BaseEntity {
     private Long amount;
 
     // room number
-    @Column private String roomNumber;
+    @Column private String roomId;
 
     // spreader user id
     @Column private Long spreaderUserId;
