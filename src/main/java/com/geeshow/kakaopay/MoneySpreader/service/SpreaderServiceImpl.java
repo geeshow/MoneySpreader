@@ -1,6 +1,7 @@
 package com.geeshow.kakaopay.MoneySpreader.service;
 
 import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
+import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
 import com.geeshow.kakaopay.MoneySpreader.exception.*;
 import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.RandomTicketGenerator;
@@ -131,7 +132,9 @@ public class SpreaderServiceImpl implements SpreaderService {
         // 중복 수취 여부 확인
         if ( spreader.isReceiverAlready(receiverUserId) ) {
             throw new AlreadyReceivedTicketException(receiverUserId,
-                    spreader.findTicketBelongTo(receiverUserId).getReceiptDate()
+                    spreader.findTicketBelongTo(receiverUserId)
+                            .map(SpreaderTicket::getReceiptDate)
+                            .orElse("")
             );
         }
     }

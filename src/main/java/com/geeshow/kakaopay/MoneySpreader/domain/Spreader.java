@@ -75,10 +75,10 @@ public class Spreader extends BaseEntity {
                         Optional.ofNullable(ticket.getReceiverUserId()).orElse(0L) == userId );
     }
 
-    public SpreaderTicket findTicketBelongTo(long userId) {
+    public Optional<SpreaderTicket> findTicketBelongTo(long userId) {
         return spreaderTickets.stream()
                 .filter(ticket -> ticket.isBelongTo(userId))
-                .findFirst().orElse(null);
+                .findFirst();
     }
 
     public List<SpreaderTicket> getReceivedTickets() {

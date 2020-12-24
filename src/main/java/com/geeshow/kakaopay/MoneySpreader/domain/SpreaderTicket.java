@@ -34,7 +34,7 @@ public class SpreaderTicket extends BaseEntity {
     }
 
     public boolean isReceived() {
-        return receiverUserId != null;
+        return Optional.ofNullable(receiverUserId).isPresent();
     }
 
     public boolean isBelongTo(long userId) {
