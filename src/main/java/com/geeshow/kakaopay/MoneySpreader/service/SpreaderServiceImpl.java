@@ -51,14 +51,15 @@ public class SpreaderServiceImpl implements SpreaderService {
                 )
                 .build();
 
-        // 뿌리기 티켓 생성 및 등록
-        spreader.registeTickets(
-                RandomTicketGenerator.builder()
-                    .amount(amount)
-                    .count(ticketCount)
-                    .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
-                    .build()
-        );
+        // 뿌리기 티켓 생성
+        RandomTicketGenerator ticketGenerator = RandomTicketGenerator.builder()
+                .amount(amount)
+                .count(ticketCount)
+                .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
+                .build();
+
+        // 뿌리기 티켓 등록(with 출금 처리)
+        spreader.registeTickets(ticketGenerator);
 
         return spreaderRepository.save(spreader);
     }
@@ -106,10 +107,15 @@ public class SpreaderServiceImpl implements SpreaderService {
         // 수취인 사용자 조회
         KakaoUser kakaoUser = kakaoUserRepository.findById(receiverUserId).get();
 
-        // 뿌리기 수취(with 입금 처리)
-        return spreader.findReceivableTicket()
-                .orElseThrow(()->new NotRemainTicketException(roomId))
+        // 뿌리기 수취
+        long receiptAmount = spreader.findReceivableTicket()
+                .orElseThrow(() -> new NotRemainTicketException(roomId))
                 .receiveTicket(kakaoUser);
+
+        // 입금 처리
+        kakaoUser.deposit(receiptAmount);
+
+        return receiptAmount;
     }
 
     private void validateReceive(String roomId, String token, long receiverUserId) {
