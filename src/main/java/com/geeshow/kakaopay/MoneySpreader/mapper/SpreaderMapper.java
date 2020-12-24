@@ -23,8 +23,8 @@ public abstract class SpreaderMapper {
     public abstract SpreaderDto.ReadDto toDto(Spreader spreader);
 
     List<SpreaderTicketDto.ResponseGet> mapReceipts(Spreader spreader) {
-        return spreader.getSpreaderTickets().stream()
-                .filter(spreaderTicket -> spreaderTicket.getReceiverUserId() != null)
+        return spreader.getReceivedTickets()
+                .stream()
                 .map(ticket ->
                         SpreaderTicketDto.ResponseGet.builder()
                             .amount(ticket.getAmount())
@@ -34,10 +34,7 @@ public abstract class SpreaderMapper {
                 .collect(Collectors.toList());
     }
 
-    Long mapReceiptAmount(Spreader spreader) {
-        return spreader.getSpreaderTickets().stream()
-                .filter(spreaderTicket -> Optional.ofNullable(spreaderTicket.getReceiverUserId()).orElse(0L) > 0)
-                .map(SpreaderTicket::getAmount)
-                .reduce(0L, Long::sum);
+    long mapReceiptAmount(Spreader spreader) {
+        return spreader.getTotalReceiptAmount();
     }
 }

@@ -5,13 +5,11 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.exception.ExceedSpreadTicketCountException;
-import com.geeshow.kakaopay.MoneySpreader.exception.ExpiredReadSpreaderException;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundKakaoUserException;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundRoomException;
+import com.geeshow.kakaopay.MoneySpreader.exception.*;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
+import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import com.geeshow.kakaopay.MoneySpreader.utils.token.SecureTokenGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +38,9 @@ class SpreaderServiceTest {
     private RoomUserRepository roomUserRepository;
 
     private long _USER_ID;
+    private long _RECEIVER_USER_ID1;
+    private long _RECEIVER_USER_ID2;
+    private long _RECEIVER_USER_ID3;
     private String _ROOM_ID = "X-ROOM-ID-10";
 
     @BeforeEach
@@ -50,11 +51,23 @@ class SpreaderServiceTest {
         roomUserRepository.save(RoomUser.builder().kakaoUser(spreader).roomId(_ROOM_ID).build());
 
         // 받는 사용자 등록
-        IntStream.range(0, 3).forEach(num -> {
-            roomUserRepository.save(RoomUser.builder().kakaoUser(
+        _RECEIVER_USER_ID1 = roomUserRepository.save(
+                RoomUser.builder().kakaoUser(
                     kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
-            ).roomId(_ROOM_ID).build());
-        });
+                ).roomId(_ROOM_ID).build()
+        ).getId();
+
+        _RECEIVER_USER_ID2 = roomUserRepository.save(
+                RoomUser.builder().kakaoUser(
+                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
+                ).roomId(_ROOM_ID).build()
+        ).getId();
+
+        _RECEIVER_USER_ID3 = roomUserRepository.save(
+                RoomUser.builder().kakaoUser(
+                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
+                ).roomId(_ROOM_ID).build()
+        ).getId();
 
         _USER_ID = spreader.getId();
     }
@@ -78,7 +91,7 @@ class SpreaderServiceTest {
         assertThat(spreader.getRoomId()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
         assertThat(spreader.getTicketCount()).isEqualTo(ticketCount);
-        assertThat(spreader.getExpiredDate()).isAfter(LocalDateTime.now());
+        assertThat(spreader.getExpireReadDate()).isAfter(LocalDateTime.now());
         assertThat(spreader.getSpreaderTickets().size()).isEqualTo(spreader.getTicketCount());
         assertThat(spreader.getSpreaderTickets().get(0).getAmount()).isGreaterThan(0);
         assertThat(spreader.getSpreaderTickets().get(1).getAmount()).isGreaterThan(0);
@@ -209,7 +222,7 @@ class SpreaderServiceTest {
         assertThat(spreader.getRoomId()).isEqualTo(_ROOM_ID);
         assertThat(spreader.getSpreaderUserId()).isEqualTo(_USER_ID);
         assertThat(spreader.getTicketCount()).isGreaterThan(0);
-        assertThat(spreader.getExpiredDate()).isAfter(LocalDateTime.now());
+        assertThat(spreader.getExpireReadDate()).isAfter(LocalDateTime.now());
         assertThat(spreader.getSpreaderTickets().size()).isEqualTo(spreader.getTicketCount());
         assertThat(spreader.getSpreaderTickets().get(0).getAmount()).isGreaterThan(0);
         assertThat(spreader.getSpreaderTickets().get(1).getAmount()).isGreaterThan(0);
@@ -231,7 +244,8 @@ class SpreaderServiceTest {
                 .spreaderUserId(_USER_ID)
                 .amount(10000L)
                 .ticketCount(4)
-                .expiredDate(LocalDateTime.now().minusDays(SpreaderConstant.PERIOD_OF_EXPIRE_SPREAD))
+                .expireReadDate(LocalDateTime.now().minusDays(SpreaderConstant.EXPIRE_DAYS_OF_SPREAD))
+                .expireReceiptDate(LocalDateTime.now().minusDays(SpreaderConstant.EXPIRE_MINUTES_OF_RECEIPT))
                 .token(
                         SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE)
                 )
@@ -243,5 +257,35 @@ class SpreaderServiceTest {
                 , ()-> spreaderService.read(spreader.getToken(), _USER_ID));
         String message = exception.getMessage();
         assertThat(message).contains("만료");
+    }
+
+
+    @Test
+    @DisplayName("받기 테스트 - 정상받기")
+    public void reciptTestReceivableTicket() {
+        //given
+        long amount = 10000;
+        int ticketCount = 3;
+
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
+
+        //when
+        long receive1 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID1);
+        long receive2 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID2);
+        long receive3 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID3);
+
+        //then
+        Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, _ROOM_ID).get();
+        assertThat(receive1+receive2+receive3).isEqualTo(amount);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID1);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID2);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID3);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).getAmount()).isEqualTo(receive1);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).getAmount()).isEqualTo(receive2);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).getAmount()).isEqualTo(receive3);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
+//        assertThrows(NotRemainTicketException.class, () -> spreader.findReceivableTicket().orElseThrow(()->new NotRemainTicketException(_ROOM_ID)));
     }
 }

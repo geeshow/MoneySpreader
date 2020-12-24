@@ -1,8 +1,10 @@
 package com.geeshow.kakaopay.MoneySpreader.domain;
 
+import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -24,13 +26,25 @@ public class SpreaderTicket extends BaseEntity {
     @JoinColumn(name = "spreader_id")
     private Spreader spreader;
 
-    public void receiveMoney(KakaoUser receiver) {
+    public long receiveTicket(KakaoUser receiver) {
         setReceiverUserId(receiver.getId());
         receiver.deposit(getAmount());
+
+        return getAmount();
     }
 
     public boolean isReceived() {
         return receiverUserId != null;
     }
 
+    public boolean isBelongTo(long userId) {
+        return Optional.ofNullable(receiverUserId).orElse(0L) == userId;
+    }
+
+    public String getReceiptDate() {
+        if ( isReceived() )
+            return SpreaderDateUtils.parseToDateString(this.getLastModifiedDate());
+
+        return "";
+    }
 }

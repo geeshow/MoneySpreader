@@ -9,6 +9,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -36,7 +38,10 @@ public class Spreader extends BaseEntity {
     private Integer ticketCount;
 
     @Column(nullable = false)
-    private LocalDateTime expiredDate;
+    private LocalDateTime expireReadDate;
+
+    @Column(nullable = false)
+    private LocalDateTime expireReceiptDate;
 
     // Receiver Users
     @OneToMany(mappedBy = "spreader", cascade = CascadeType.ALL)
@@ -56,22 +61,42 @@ public class Spreader extends BaseEntity {
         ticket.setSpreader(this);
     }
 
-    public boolean isExpired() {
-        return getExpiredDate().isBefore(LocalDateTime.now());
+    public boolean isExpiredRead() {
+        return this.expireReadDate.isBefore(LocalDateTime.now());
     }
 
-    public Long getReceiptAmount() {
-        return 123L;
-//        return spreaderTickets.stream()
-//                .filter(spreaderTicket -> Optional.ofNullable(spreaderTicket.getReceiverUserId()).orElse(0L) > 0)
-//                .map(SpreaderTicket::getAmount)
-//                .reduce(0L, Long::sum);
+    public boolean isExpiredReceive() {
+        return this.expireReceiptDate.isBefore(LocalDateTime.now());
     }
 
-    public SpreaderTicket findOneNotReceive() {
-        return getSpreaderTickets().stream()
+    public boolean isReceiverAlready(long userId) {
+        return spreaderTickets.stream()
+                .anyMatch(ticket ->
+                        Optional.ofNullable(ticket.getReceiverUserId()).orElse(0L) == userId );
+    }
+
+    public SpreaderTicket findTicketBelongTo(long userId) {
+        return spreaderTickets.stream()
+                .filter(ticket -> ticket.isBelongTo(userId))
+                .findFirst().orElse(null);
+    }
+
+    public List<SpreaderTicket> getReceivedTickets() {
+        return spreaderTickets.stream()
                 .filter(SpreaderTicket::isReceived)
-                .findFirst()
-                .orElseThrow(() -> new NotRemainTicketException(token));
+                .collect(Collectors.toList());
+    }
+
+    public long getTotalReceiptAmount() {
+        return spreaderTickets.stream()
+                .filter(spreaderTicket -> Optional.ofNullable(spreaderTicket.getReceiverUserId()).orElse(0L) > 0)
+                .map(SpreaderTicket::getAmount)
+                .reduce(0L, Long::sum);
+    }
+
+    public Optional<SpreaderTicket> findReceivableTicket() {
+        return getSpreaderTickets().stream()
+                .filter(ticket -> !ticket.isReceived())
+                .findFirst();
     }
 }

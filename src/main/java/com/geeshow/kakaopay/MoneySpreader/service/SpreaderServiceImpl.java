@@ -43,7 +43,8 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .spreaderUserId(kakaoUser.getId())
                 .amount(amount)
                 .ticketCount(ticketCount)
-                .expiredDate(LocalDateTime.now().plusDays(SpreaderConstant.PERIOD_OF_EXPIRE_SPREAD))
+                .expireReadDate(LocalDateTime.now().plusDays(SpreaderConstant.EXPIRE_DAYS_OF_SPREAD))
+                .expireReceiptDate(LocalDateTime.now().plusMinutes(SpreaderConstant.EXPIRE_MINUTES_OF_RECEIPT))
                 .token(
                         SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE)
                 )
@@ -83,9 +84,9 @@ public class SpreaderServiceImpl implements SpreaderService {
         Spreader spreader = spreaderRepository.findByTokenAndSpreaderUserId(token, userId)
                 .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
 
-        if ( spreader.isExpired() ) {
+        if ( spreader.isExpiredRead() ) {
             throw new ExpiredReadSpreaderException(
-                    SpreaderDateUtils.parseToDateString(spreader.getExpiredDate())
+                    SpreaderDateUtils.parseToDateString(spreader.getExpireReadDate())
             );
         }
 
@@ -93,34 +94,46 @@ public class SpreaderServiceImpl implements SpreaderService {
     }
 
     @Override
-    public long receive(String roomId, String token, long userId) {
-        validateReceive(roomId, token, userId);
+    @Transactional
+    public long receive(String roomId, String token, long receiverUserId) {
 
-        return 0;
-    }
-
-    private void validateReceive(String roomId, String token, long userId) {
-
-        // 사용자 & 대화방 존재 체크
-        checkUserInRoom(roomId, userId);
+        validateReceive(roomId, token, receiverUserId);
 
         // 뿌리기 조회
+        Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, roomId).get();
 
-        // 수취 여부 확인
+        // 수취인 사용자 조회
+        KakaoUser kakaoUser = kakaoUserRepository.findById(receiverUserId).get();
+
+        // 뿌리기 수취(with 입금 처리)
+        return spreader.findReceivableTicket()
+                .orElseThrow(()->new NotRemainTicketException(roomId))
+                .receiveTicket(kakaoUser);
+    }
+
+    private void validateReceive(String roomId, String token, long receiverUserId) {
+
+        // 사용자 & 대화방 존재 체크
+        checkUserInRoom(roomId, receiverUserId);
+
+        // 뿌리기 조회
+        Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, roomId)
+                .orElseThrow(() -> new NotFoundSpreaderException(token, roomId));
+
+        // 수취 만료 시간 확인
+        if ( spreader.isExpiredReceive() )
+            throw new ExpiredTicketReceiptException(SpreaderConstant.EXPIRE_MINUTES_OF_RECEIPT);
 
         // 뿌리기 당사자 여부 확인
-        Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
-                .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
+        if ( spreader.getSpreaderUserId() == receiverUserId )
+            throw new ReceiveOwnTicketException(receiverUserId);
 
-        // 대화방 사용자 목록
-        ArrayList<RoomUser> usersInRoom = roomUserRepository.findByRoomId(roomId).get();
-
-//        // 뿌리기 건수 체크
-//        if ( usersInRoom.size() <= ticketCount )
-//            throw new ExceedSpreadTicketCountException(usersInRoom.size() - 1);
-//
-//        if (amount < ticketCount)
-//            throw new NotEnoughSpreadAmountException(amount, ticketCount);
+        // 중복 수취 여부 확인
+        if ( spreader.isReceiverAlready(receiverUserId) ) {
+            throw new AlreadyReceivedTicketException(receiverUserId,
+                    spreader.findTicketBelongTo(receiverUserId).getReceiptDate()
+            );
+        }
     }
 
     private void checkUserInRoom(String roomId, long userId) {
