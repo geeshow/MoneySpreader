@@ -2,14 +2,13 @@ package com.geeshow.kakaopay.MoneySpreader.domain;
 
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotRemainTicket;
+import com.geeshow.kakaopay.MoneySpreader.exception.NotRemainTicketException;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -45,7 +44,7 @@ public class Spreader extends BaseEntity {
     List<SpreaderTicket> spreaderTickets = new ArrayList<>();
 
     public void registeTickets(TicketGenerator<Ticket> ticketGenerator) {
-        ticketGenerator.generate(getAmount(), getTicketCount()).stream()
+        ticketGenerator.generate().stream()
                 .forEach(ticket -> {
                     addSpreaderTicket(ticket.getAmount());
                 });
@@ -73,6 +72,6 @@ public class Spreader extends BaseEntity {
         return getSpreaderTickets().stream()
                 .filter(SpreaderTicket::isReceived)
                 .findFirst()
-                .orElseThrow(() -> new NotRemainTicket(token));
+                .orElseThrow(() -> new NotRemainTicketException(token));
     }
 }

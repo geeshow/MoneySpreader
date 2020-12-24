@@ -12,7 +12,7 @@ public interface SpreaderService {
      * @param ticketCount 뿌린 인원
      * @return 뿌리기 token
      */
-    String spread(String roomId, long userId, long amount, int ticketCount);
+    Spreader spread(String roomId, long userId, long amount, int ticketCount);
 
     /**
      * 등록된 뿌리기 조회
@@ -22,4 +22,14 @@ public interface SpreaderService {
      * @return 뿌리기 현재 상태
      */
     Spreader read(String token, long userId);
+
+    /**
+     * 뿌린 돈 받기
+     *
+     * @param roomId 대화방 ID
+     * @param token 뿌리기 token
+     * @param userId 사용자 ID
+     * @return 뿌리기 현재 상태
+     */
+    long receive(String roomId, String token, long userId);
 }

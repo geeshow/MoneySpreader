@@ -28,7 +28,7 @@ public class SpreaderServiceImpl implements SpreaderService {
 
     @Override
     @Transactional
-    public String spread(String roomId, long userId, long amount, int ticketCount) {
+    public Spreader spread(String roomId, long userId, long amount, int ticketCount) {
 
         validateSpread(roomId, userId, amount, ticketCount);
 
@@ -50,45 +50,85 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .build();
 
         // 뿌리기 티켓 생성
-        spreader.registeTickets(new RandomTicketGenerator());
+        spreader.registeTickets(
+                RandomTicketGenerator.builder()
+                .amount(amount)
+                .count(ticketCount)
+                .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
+                .build()
+        );
 
-        return spreaderRepository.save(spreader).getToken();
+        return spreaderRepository.save(spreader);
     }
 
     private void validateSpread(String roomId, long userId, long amount, int ticketCount) {
 
-        // 사용자 존재 체크
-        KakaoUser kakaoUser = kakaoUserRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundKakaoUser(userId));
+        // 사용자 & 대화방 존재 체크
+        checkUserInRoom(roomId, userId);
 
-        // 룸 존재 체크
-        ArrayList<RoomUser> usersInRoom = roomUserRepository.findByRoomId(roomId)
-                .orElseThrow(() -> new NotFoundRoom(roomId));
-
-        // 룸 사용자 체크
-        usersInRoom.stream().filter(user -> user.getId() == kakaoUser.getId()).findFirst()
-                .orElseThrow(() -> new NotFoundRoom(roomId, kakaoUser));
+        // 대화방 사용자 목록
+        ArrayList<RoomUser> usersInRoom = roomUserRepository.findByRoomId(roomId).get();
 
         // 뿌리기 건수 체크
         if ( usersInRoom.size() <= ticketCount )
-            throw new ExceedSpreadTicketCount(usersInRoom.size() - 1);
+            throw new ExceedSpreadTicketCountException(usersInRoom.size() - 1);
 
         if (amount < ticketCount)
-            throw new NotEnoughSpreadAmount(amount, ticketCount);
+            throw new NotEnoughSpreadAmountException(amount, ticketCount);
     }
 
     @Override
     public Spreader read(String token, long userId) {
 
         Spreader spreader = spreaderRepository.findByTokenAndSpreaderUserId(token, userId)
-                .orElseThrow(() -> new NotFoundSpreader(token, userId));
+                .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
 
         if ( spreader.isExpired() ) {
-            throw new ExpiredReadSpreader(
+            throw new ExpiredReadSpreaderException(
                     SpreaderDateUtils.parseToDateString(spreader.getExpiredDate())
             );
         }
 
         return spreader;
+    }
+
+    @Override
+    public long receive(String roomId, String token, long userId) {
+        validateReceive(roomId, token, userId);
+
+        return 0;
+    }
+
+    private void validateReceive(String roomId, String token, long userId) {
+
+        // 사용자 & 대화방 존재 체크
+        checkUserInRoom(roomId, userId);
+
+        Spreader spreader = spreaderRepository.findByTokenAndSpreaderUserId(token, userId)
+                .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
+
+        // 대화방 사용자 목록
+        ArrayList<RoomUser> usersInRoom = roomUserRepository.findByRoomId(roomId).get();
+
+//        // 뿌리기 건수 체크
+//        if ( usersInRoom.size() <= ticketCount )
+//            throw new ExceedSpreadTicketCountException(usersInRoom.size() - 1);
+//
+//        if (amount < ticketCount)
+//            throw new NotEnoughSpreadAmountException(amount, ticketCount);
+    }
+
+    private void checkUserInRoom(String roomId, long userId) {
+        // 사용자 존재 체크
+        KakaoUser kakaoUser = kakaoUserRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundKakaoUserException(userId));
+
+        // 룸 존재 체크
+        ArrayList<RoomUser> usersInRoom = roomUserRepository.findByRoomId(roomId)
+                .orElseThrow(() -> new NotFoundRoomException(roomId));
+
+        // 룸 사용자 체크
+        usersInRoom.stream().filter(user -> user.getId() == kakaoUser.getId()).findFirst()
+                .orElseThrow(() -> new NotFoundRoomException(roomId, kakaoUser));
     }
 }

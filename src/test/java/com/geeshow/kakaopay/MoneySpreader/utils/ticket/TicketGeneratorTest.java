@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TicketGeneratorTest {
@@ -15,17 +16,19 @@ class TicketGeneratorTest {
     public void generateMinimumPriceTicket() throws Exception {
 
         // given
-        RandomTicketGenerator randomTicketGenerator = new RandomTicketGenerator();
-        long amount = 100;
-        int ticketCount = 100;
+        RandomTicketGenerator randomTicketGenerator = RandomTicketGenerator.builder()
+                .amount(100)
+                .count(100)
+                .minValue(1)
+                .build();
 
         // when
-        ArrayList<Ticket> tickets = randomTicketGenerator.generate(amount, ticketCount);
+        ArrayList<Ticket> tickets = randomTicketGenerator.generate();
 
         // then
-        assertTrue(tickets.size() == 100);
+        assertThat(tickets.size()).isEqualTo(100);
         tickets.stream().forEach(ticket -> {
-            assertTrue(ticket.getAmount() == 1);
+            assertThat(ticket.getAmount()).isEqualTo(1);
         });
 
     }
@@ -35,15 +38,18 @@ class TicketGeneratorTest {
     public void generateSumPriceTicket() throws Exception {
 
         // given
-        RandomTicketGenerator randomTicketGenerator = new RandomTicketGenerator();
         long amount = 1000;
-        int ticketCount = 5;
+        RandomTicketGenerator randomTicketGenerator = RandomTicketGenerator.builder()
+                .amount(amount)
+                .count(5)
+                .minValue(1)
+                .build();
 
         // when
-        ArrayList<Ticket> tickets = randomTicketGenerator.generate(amount, ticketCount);
+        ArrayList<Ticket> tickets = randomTicketGenerator.generate();
         Long result = tickets.stream().collect(Collectors.summingLong(Ticket::getAmount));
 
         // then
-        assertTrue(result.longValue() == amount);
+        assertThat(result.longValue()).isEqualTo(amount);
     }
 }

@@ -132,7 +132,7 @@ class SpreaderControllerTest {
         //given
         long amount = 10000;
         int ticketCount = 3;
-        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount);
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
 
         //when
         final ResultActions actions =

@@ -5,10 +5,10 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.exception.ExceedSpreadTicketCount;
-import com.geeshow.kakaopay.MoneySpreader.exception.ExpiredReadSpreader;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundKakaoUser;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundRoom;
+import com.geeshow.kakaopay.MoneySpreader.exception.ExceedSpreadTicketCountException;
+import com.geeshow.kakaopay.MoneySpreader.exception.ExpiredReadSpreaderException;
+import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundKakaoUserException;
+import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundRoomException;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
@@ -68,7 +68,7 @@ class SpreaderServiceTest {
         int ticketCount = 3;
 
         //when
-        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount);
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
         Spreader spreader = spreaderRepository.findByToken(token)
                 .orElseThrow(() -> new AssertionError("뿌리기 조회 오류"));
 
@@ -103,7 +103,7 @@ class SpreaderServiceTest {
         });
 
         //when
-        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount);
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
         Spreader spreader = spreaderRepository.findByToken(token)
                 .orElseThrow(() -> new AssertionError("뿌리기 조회 오류"));
 
@@ -150,7 +150,7 @@ class SpreaderServiceTest {
         long notExistUserId = 12130192019L;
 
         //when
-        NotFoundKakaoUser exception = assertThrows(NotFoundKakaoUser.class
+        NotFoundKakaoUserException exception = assertThrows(NotFoundKakaoUserException.class
                 , ()-> spreaderService.spread(_ROOM_ID, notExistUserId, amount, ticketCount));
         String message = exception.getMessage();
 
@@ -168,7 +168,7 @@ class SpreaderServiceTest {
         String notExistRoomId = "testtesttest111";
 
         //when
-        NotFoundRoom exception = assertThrows(NotFoundRoom.class
+        NotFoundRoomException exception = assertThrows(NotFoundRoomException.class
                 , ()-> spreaderService.spread(notExistRoomId, _USER_ID, amount, ticketCount));
         String message = exception.getMessage();
 
@@ -184,7 +184,7 @@ class SpreaderServiceTest {
         int ticketCount = 1000;
 
         //when
-        ExceedSpreadTicketCount exception = assertThrows(ExceedSpreadTicketCount.class
+        ExceedSpreadTicketCountException exception = assertThrows(ExceedSpreadTicketCountException.class
                 , ()-> spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount));
         String message = exception.getMessage();
 
@@ -198,7 +198,7 @@ class SpreaderServiceTest {
         //given
         long amount = 10000;
         int ticketCount = 3;
-        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount);
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
 
         //when
         Spreader spreader = spreaderService.read(token, _USER_ID);
@@ -239,7 +239,7 @@ class SpreaderServiceTest {
         spreaderRepository.save(spreader);
 
         //then
-        ExpiredReadSpreader exception = assertThrows(ExpiredReadSpreader.class
+        ExpiredReadSpreaderException exception = assertThrows(ExpiredReadSpreaderException.class
                 , ()-> spreaderService.read(spreader.getToken(), _USER_ID));
         String message = exception.getMessage();
         assertThat(message).contains("만료");

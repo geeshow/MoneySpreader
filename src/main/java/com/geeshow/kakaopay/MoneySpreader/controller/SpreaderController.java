@@ -34,8 +34,8 @@ public class SpreaderController {
             @RequestBody @Valid SpreaderDto.RequestPost requestPost) {
 
         String token = spreaderService.spread(
-                    roomID, userId, requestPost.getAmount(), requestPost.getNumber()
-        );
+                roomID, userId, requestPost.getAmount(), requestPost.getNumber()
+        ).getToken();
 
         ResponsePost responsePost =
                 ResponsePost.builder()
