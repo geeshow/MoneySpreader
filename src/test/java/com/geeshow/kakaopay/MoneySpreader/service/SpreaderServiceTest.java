@@ -99,6 +99,7 @@ class SpreaderServiceTest {
         assertThat(spreader.getSpreaderTickets().get(0).isReceived()).isFalse();
         assertThat(spreader.getSpreaderTickets().get(1).isReceived()).isFalse();
         assertThat(spreader.getSpreaderTickets().get(2).isReceived()).isFalse();
+        assertThat(spreader.getReceivedTickets().size()).isEqualTo(0);
     }
 
 
@@ -277,15 +278,16 @@ class SpreaderServiceTest {
         //then
         Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, _ROOM_ID).get();
         assertThat(receive1+receive2+receive3).isEqualTo(amount);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID1);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID2);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID3);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).getAmount()).isEqualTo(receive1);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).getAmount()).isEqualTo(receive2);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).getAmount()).isEqualTo(receive3);
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
-        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
-//        assertThrows(NotRemainTicketException.class, () -> spreader.findReceivableTicket().orElseThrow(()->new NotRemainTicketException(_ROOM_ID)));
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).get().getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID1);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).get().getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID2);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).get().getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID3);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).get().getAmount()).isEqualTo(receive1);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).get().getAmount()).isEqualTo(receive2);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).get().getAmount()).isEqualTo(receive3);
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).get().getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).get().getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
+        assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID3).get().getReceiptDate()).isEqualTo(SpreaderDateUtils.getToday());
+        assertThrows(NotRemainTicketException.class, () -> spreader.findReceivableTicket().orElseThrow(()->new NotRemainTicketException(_ROOM_ID)));
     }
+
 }
