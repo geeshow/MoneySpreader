@@ -48,7 +48,7 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .expireReadDate(LocalDateTime.now().plusDays(SpreaderConstant.EXPIRE_DAYS_OF_SPREAD))
                 .expireReceiptDate(LocalDateTime.now().plusMinutes(SpreaderConstant.EXPIRE_MINUTES_OF_RECEIPT))
                 .token(
-                        SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE)
+                        generateUniqueTokenInRoom(roomId, SpreaderConstant.START_RECURSICE_COUNT)
                 )
                 .build();
 
@@ -79,6 +79,18 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         if (amount < ticketCount)
             throw new NotEnoughSpreadAmountException(amount, ticketCount);
+    }
+
+    private String generateUniqueTokenInRoom(String roomId, int defenseCode) {
+
+        String token = SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE);
+
+        if ( defenseCode >= SpreaderConstant.MAXIMUM_RECURSICE_COUNT )
+            return token;
+        else if ( spreaderRepository.findByRoomIdAndToken(roomId, token).isPresent() )
+            return generateUniqueTokenInRoom(roomId, defenseCode++);
+        else
+            return token;
     }
 
     @Override

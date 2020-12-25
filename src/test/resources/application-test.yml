@@ -18,4 +18,3 @@ app:
   config:
     api-host: api.geeshow.com
     docs-host: docs.geeshow.com
-    

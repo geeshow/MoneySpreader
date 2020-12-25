@@ -21,6 +21,9 @@ public class SpreaderTicket extends BaseEntity {
     // Receiver User
     @Column private Long receiverUserId;
 
+    // Lock 버전
+    @Version private Integer version;
+
     // Spreader User ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spreader_id")
