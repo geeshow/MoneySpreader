@@ -1,10 +1,15 @@
 package com.geeshow.kakaopay.MoneySpreader.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.geeshow.kakaopay.MoneySpreader.constant.HttpErrorMessages;
+import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
 import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
+import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
+import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
+import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
 import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,19 +20,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.stream.IntStream;
+import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.RequestSpreadDto;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -40,22 +49,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(uriHost = "${app.config.docs-host}")
 @ActiveProfiles("test")
 class SpreaderControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private KakaoUserRepository kakaoUserRepository;
-    @Autowired
-    private RoomUserRepository roomUserRepository;
+    @Autowired private KakaoUserRepository kakaoUserRepository;
+    @Autowired private RoomUserRepository roomUserRepository;
+    @Autowired private SpreaderRepository spreaderRepository;
     @Autowired
     private SpreaderService spreaderService;
 
     private long _USER_ID;
-    private String _ROOM_ID = "X-ROOM-ID-10";
+    private long _RECEIVER_USER_ID1;
+    private long _RECEIVER_USER_ID2;
+    private long _RECEIVER_USER_ID3;
+    private String _ROOM_ID = "X-ROOM-ID-20";
 
     @BeforeEach
     void setUp() {
@@ -65,11 +76,23 @@ class SpreaderControllerTest {
         roomUserRepository.save(RoomUser.builder().kakaoUser(spreader).roomId(_ROOM_ID).build());
 
         // 받는 사용자 등록
-        IntStream.range(0, 3).forEach(num -> {
-            roomUserRepository.save(RoomUser.builder().kakaoUser(
-                    kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
-            ).roomId(_ROOM_ID).build());
-        });
+        _RECEIVER_USER_ID1 = roomUserRepository.save(
+                RoomUser.builder().kakaoUser(
+                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
+                ).roomId(_ROOM_ID).build()
+        ).getId();
+
+        _RECEIVER_USER_ID2 = roomUserRepository.save(
+                RoomUser.builder().kakaoUser(
+                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
+                ).roomId(_ROOM_ID).build()
+        ).getId();
+
+        _RECEIVER_USER_ID3 = roomUserRepository.save(
+                RoomUser.builder().kakaoUser(
+                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
+                ).roomId(_ROOM_ID).build()
+        ).getId();
 
         _USER_ID = spreader.getId();
     }
@@ -77,22 +100,22 @@ class SpreaderControllerTest {
     @Test
     @DisplayName("뿌리기 등록 테스트")
     void spreadConCheckToken() throws Exception {
-        // Given
+        //given
         RequestSpreadDto requestSpreadDto = RequestSpreadDto.builder()
                 .amount(20000)
                 .number(3)
                 .build();
 
-        // When
+        //when
         final ResultActions actions =
                 mockMvc.perform(
                         post("/v1/spreader")
-                                .header("X-USER-ID", _USER_ID)
-                                .header("X-ROOM-ID", _ROOM_ID)
+                                .header(SpreaderConstant.HTTP_HEADER_USER_ID, _USER_ID)
+                                .header(SpreaderConstant.HTTP_HEADER_ROOM_ID, _ROOM_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaTypes.HAL_JSON)
                                 .content(objectMapper.writeValueAsString(requestSpreadDto)));
-        // Then
+        //then
         actions
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -101,29 +124,29 @@ class SpreaderControllerTest {
                 .andExpect(jsonPath("token").isNotEmpty())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.read").exists())
-//                .andExpect(jsonPath("_links.receiver").exists())
+                .andExpect(jsonPath("_links.receipt").exists())
                 .andExpect(jsonPath("_links.profile").exists())
                 .andDo(
                         document(
                                 "spreader",
                                 preprocessResponse(prettyPrint()),
                                 links(
-                                        linkWithRel("self").description("url of self page"),
-//                                        linkWithRel("reveiver").description("url of receipt"),
-                                        linkWithRel("read").description("url of the spread information for spreader"),
+                                        linkWithRel("self").description("현재 페이지의 URL"),
+                                        linkWithRel("receipt").description("뿌린 티켓을 수취하기 위한 URL. 뿌린이는 수령 불가."),
+                                        linkWithRel("read").description("뿌린 티켓의 수취 상태를 조회하기 위한 URL. 뿌린이만 조회 가능함."),
                                         linkWithRel("profile").description("profile url")),
                                 requestHeaders(
                                         headerWithName(HttpHeaders.ACCEPT).description("Accept header"),
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-type header"),
-                                        headerWithName("X-USER-ID").description("User ID"),
-                                        headerWithName("X-ROOM-ID").description("Room ID")),
+                                        headerWithName(SpreaderConstant.HTTP_HEADER_USER_ID).description("사용자 ID"),
+                                        headerWithName(SpreaderConstant.HTTP_HEADER_ROOM_ID).description("대화방 ID")),
                                 requestFields(
-                                        fieldWithPath("amount").description("Spread Amount"),
-                                        fieldWithPath("number").description("Number of Receivers ")),
+                                        fieldWithPath("amount").description("뿌리기 금액"),
+                                        fieldWithPath("number").description("받을 대상 맴버수")),
                                 responseHeaders(
                                         headerWithName(HttpHeaders.LOCATION).description("Location header"),
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-type header")),
-                                relaxedResponseFields(fieldWithPath("token").description("spread token"))));
+                                relaxedResponseFields(fieldWithPath("token").description("뿌리기 token"))));
     }
 
     @Test
@@ -138,7 +161,8 @@ class SpreaderControllerTest {
         final ResultActions actions =
                 mockMvc.perform(
                         get("/v1/spreader/{token}", token)
-                                .header("X-USER-ID", _USER_ID)
+                                .header(SpreaderConstant.HTTP_HEADER_ROOM_ID, _ROOM_ID)
+                                .header(SpreaderConstant.HTTP_HEADER_USER_ID, _USER_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaTypes.HAL_JSON));
 
@@ -153,21 +177,21 @@ class SpreaderControllerTest {
                 .andExpect(jsonPath("receipts[0]").doesNotExist())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.spreader").exists())
-//                .andExpect(jsonPath("_links.receiver").exists())
+                .andExpect(jsonPath("_links.receipt").exists())
                 .andExpect(jsonPath("_links.profile").exists())
                 .andDo(
                         document(
                                 "read",
                                 preprocessResponse(prettyPrint()),
                                 links(
-                                        linkWithRel("self").description("url of self page"),
-                                        linkWithRel("spreader").description("url of spreader"),
-//                                        linkWithRel("receiving").description("url of receiver"),
+                                        linkWithRel("self").description("현재 페이지의 URL"),
+                                        linkWithRel("spreader").description("대화방 사용자에게 지정한 금액을 랜덤 분산하여 뿌리기 URL"),
+                                        linkWithRel("receipt").description("뿌린 티켓을 수취하기 위한 URL. 뿌린이는 수령 불가."),
                                         linkWithRel("profile").description("profile url")),
                                 requestHeaders(
                                         headerWithName(HttpHeaders.ACCEPT).description("Accept header"),
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-type header"),
-                                        headerWithName("X-USER-ID").description("User ID")),
+                                        headerWithName(SpreaderConstant.HTTP_HEADER_USER_ID).description("User ID")),
                                 pathParameters(parameterWithName("token").description("Spread token")),
                                 responseHeaders(
                                         headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-type header")),
@@ -176,4 +200,90 @@ class SpreaderControllerTest {
                                         fieldWithPath("spreadAmount").description("뿌린 금액"),
                                         fieldWithPath("receiptAmount").description("받기 완료된 금액"))));
     }
+
+
+    @Test
+    @DisplayName("받기를 요청하고 받은 금액을 반환 받음")
+    void receiveTest() throws Exception {
+        //given
+        long amount = 10000;
+        int ticketCount = 3;
+        String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
+
+        //when
+        final ResultActions actions =
+                mockMvc.perform(
+                        put("/v1/spreader/receipt/{token}", token)
+                                .header(SpreaderConstant.HTTP_HEADER_USER_ID, _RECEIVER_USER_ID1)
+                                .header(SpreaderConstant.HTTP_HEADER_ROOM_ID, _ROOM_ID)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaTypes.HAL_JSON));
+
+        //then
+        actions
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("amount").isNumber())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.spreader").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andDo(
+                        document(
+                                "receipt",
+                                preprocessResponse(prettyPrint()),
+                                links(
+                                        linkWithRel("self").description("현재 페이지의 URL"),
+                                        linkWithRel("spreader").description("대화방 사용자에게 지정한 금액을 랜덤 분산하여 뿌리기 URL"),
+                                        linkWithRel("profile").description("profile url")),
+                                requestHeaders(
+                                        headerWithName(HttpHeaders.ACCEPT).description("Accept 헤더"),
+                                        headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-type 헤더"),
+                                        headerWithName(SpreaderConstant.HTTP_HEADER_USER_ID).description("사용자 ID"),
+                                        headerWithName(SpreaderConstant.HTTP_HEADER_ROOM_ID).description("대화방 ID")),
+                                pathParameters(parameterWithName("token").description("뿌리기 token")),
+                                responseHeaders(
+                                        headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-type 헤더")),
+                                relaxedResponseFields(fieldWithPath("amount").description("받은 금액"))));
+    }
+
+
+    @Test
+    @DisplayName("뿌리기 등록 오류 테스트 - 헤더값(X_ROOM_ID) 누락")
+    void spreadConCheckTokenWithoutHeader() throws Exception {
+        //given
+        RequestSpreadDto requestSpreadDto = RequestSpreadDto.builder()
+                .amount(20000)
+                .number(3)
+                .build();
+
+        //when
+        final ResultActions actions =
+                mockMvc.perform(
+                        post("/v1/spreader")
+                                .header(SpreaderConstant.HTTP_HEADER_USER_ID, _USER_ID)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaTypes.HAL_JSON)
+                                .content(objectMapper.writeValueAsString(requestSpreadDto)));
+        //then
+        actions
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("timestamp").exists())
+                .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(jsonPath("message").value(HttpErrorMessages.MISSING_HEADER_DATA))
+                .andExpect(jsonPath("detailMessage").exists())
+                .andDo(document("errors",
+                        responseFields(
+                                fieldWithPath("timestamp").description("오류 발생 시간"),
+                                fieldWithPath("status").description("ERROR HTTP STATUS"),
+                                fieldWithPath("message").description("기본 오류 메시지"),
+                                fieldWithPath("detailMessage").description("오류 상세 메시지")
+                        )
+                ));
+    }
+
+
+
 }

@@ -18,19 +18,20 @@ public interface SpreaderService {
     /**
      * 등록된 뿌리기 조회
      *
-     * @param token 뿌리기 token
+     * @param roomId 대화방 ID
      * @param userId 사용자 ID
+     * @param token 뿌리기 token
      * @return 뿌리기 현재 상태
      */
-    Spreader read(String token, long userId);
+    Spreader read(String roomId, long userId, String token);
 
     /**
      * 뿌린 돈 받기
      *
      * @param roomId 대화방 ID
-     * @param token 뿌리기 token
      * @param userId 사용자 ID
+     * @param token 뿌리기 token
      * @return 뿌리기 현재 상태
      */
-    SpreaderTicket receive(String roomId, String token, long userId);
+    SpreaderTicket receive(String roomId, long userId, String token);
 }

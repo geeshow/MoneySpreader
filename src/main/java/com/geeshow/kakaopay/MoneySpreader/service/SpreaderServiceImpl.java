@@ -82,9 +82,9 @@ public class SpreaderServiceImpl implements SpreaderService {
     }
 
     @Override
-    public Spreader read(String token, long userId) {
+    public Spreader read(String roomId, long userId, String token) {
 
-        Spreader spreader = spreaderRepository.findByTokenAndSpreaderUserId(token, userId)
+        Spreader spreader = spreaderRepository.findByRoomIdAndSpreaderUserIdAndToken(roomId, userId, token)
                 .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
 
         if ( spreader.isExpiredRead() ) {
@@ -98,12 +98,12 @@ public class SpreaderServiceImpl implements SpreaderService {
 
     @Override
     @Transactional
-    public SpreaderTicket receive(String roomId, String token, long receiverUserId) {
+    public SpreaderTicket receive(String roomId, long receiverUserId, String token) {
 
         validateReceive(roomId, token, receiverUserId);
 
         // 뿌리기 조회
-        Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, roomId).get();
+        Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token).get();
 
         // 수취인 사용자 조회
         KakaoUser kakaoUser = kakaoUserRepository.findById(receiverUserId).get();
@@ -124,7 +124,7 @@ public class SpreaderServiceImpl implements SpreaderService {
         checkUserInRoom(roomId, receiverUserId);
 
         // 뿌리기 조회
-        Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, roomId)
+        Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
                 .orElseThrow(() -> new NotFoundSpreaderException(token, roomId));
 
         // 수취 만료 시간 확인

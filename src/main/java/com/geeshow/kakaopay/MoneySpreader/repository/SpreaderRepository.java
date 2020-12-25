@@ -11,9 +11,9 @@ public interface SpreaderRepository extends JpaRepository<Spreader, Long> {
     Optional<Spreader> findByToken(String token);
 
     @EntityGraph(attributePaths = "spreaderTickets")
-    Optional<Spreader> findByTokenAndSpreaderUserId(String token, long userId);
+    Optional<Spreader> findByRoomIdAndSpreaderUserIdAndToken(String roomId, long userId, String token);
 
     @EntityGraph(attributePaths = "spreaderTickets")
-    Optional<Spreader> findByTokenAndRoomId(String token, String roomId);
+    Optional<Spreader> findByRoomIdAndToken(String roomId, String token);
 
 }

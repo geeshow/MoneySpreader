@@ -169,7 +169,7 @@ class SpreaderServiceTest {
         String message = exception.getMessage();
 
         //then
-        assertThat(message).contains("존재하지");
+        assertThat(message).contains("존재하지 않는 사용자 ID입니다.");
    }
 
 
@@ -187,7 +187,7 @@ class SpreaderServiceTest {
         String message = exception.getMessage();
 
         //then
-        assertThat(message).contains("존재하지");
+        assertThat(message).contains("존재하지 않는 룸 입니다.");
     }
 
     @Test
@@ -197,13 +197,12 @@ class SpreaderServiceTest {
         long amount = 123451;
         int ticketCount = 1000;
 
-        //when
+        //when & then
         ExceedSpreadTicketCountException exception = assertThrows(ExceedSpreadTicketCountException.class
                 , ()-> spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount));
         String message = exception.getMessage();
 
-        //then
-        assertThat(message).contains("건수 초과");
+        assertThat(message).contains("뿌리기 가능 건수 초과.");
     }
 
     @Test
@@ -215,7 +214,7 @@ class SpreaderServiceTest {
         String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
 
         //when
-        Spreader spreader = spreaderService.read(token, _USER_ID);
+        Spreader spreader = spreaderService.read(_ROOM_ID, _USER_ID, token);
 
         //then
         assertThat(spreader.getToken().length()).isEqualTo(SpreaderConstant.TOKEN_SIZE);
@@ -238,26 +237,16 @@ class SpreaderServiceTest {
     @DisplayName("뿌리기 조회 오류 테스트 - 뿌리기 조회 기간 초과")
     public void readExpiredSpreader() {
         //given
-
-        //when
-        Spreader spreader = Spreader.builder()
-                .roomId("TEST-SPREADER-READ")
-                .spreaderUserId(_USER_ID)
-                .amount(10000L)
-                .ticketCount(4)
-                .expireReadDate(LocalDateTime.now().minusDays(SpreaderConstant.EXPIRE_DAYS_OF_SPREAD))
-                .expireReceiptDate(LocalDateTime.now().minusDays(SpreaderConstant.EXPIRE_MINUTES_OF_RECEIPT))
-                .token(
-                        SecureTokenGenerator.generateToken(SpreaderConstant.TOKEN_SIZE)
-                )
-                .build();
+        LocalDateTime pastExpireReadDate = LocalDateTime.now().minusDays(SpreaderConstant.EXPIRE_DAYS_OF_SPREAD);
+        Spreader spreader = spreaderService.spread(_ROOM_ID, _USER_ID, 10000L, 3);
+        spreader.setExpireReadDate(pastExpireReadDate);
         spreaderRepository.save(spreader);
 
-        //then
+        //when & then
         ExpiredReadSpreaderException exception = assertThrows(ExpiredReadSpreaderException.class
-                , ()-> spreaderService.read(spreader.getToken(), _USER_ID));
+                , ()-> spreaderService.read(_ROOM_ID, _USER_ID, spreader.getToken()));
         String message = exception.getMessage();
-        assertThat(message).contains("만료");
+        assertThat(message).contains("뿌리기 조회 가능일이 만료되었습니다.");
     }
 
 
@@ -271,12 +260,12 @@ class SpreaderServiceTest {
         String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
 
         //when
-        long receive1 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID1).getAmount();
-        long receive2 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID2).getAmount();
-        long receive3 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID3).getAmount();
+        long receive1 = spreaderService.receive(_ROOM_ID, _RECEIVER_USER_ID1, token).getAmount();
+        long receive2 = spreaderService.receive(_ROOM_ID, _RECEIVER_USER_ID2, token).getAmount();
+        long receive3 = spreaderService.receive(_ROOM_ID, _RECEIVER_USER_ID3, token).getAmount();
 
         //then
-        Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, _ROOM_ID).get();
+        Spreader spreader = spreaderRepository.findByRoomIdAndToken(_ROOM_ID, token).get();
         assertThat(receive1+receive2+receive3).isEqualTo(amount);
         assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID1).get().getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID1);
         assertThat(spreader.findTicketBelongTo(_RECEIVER_USER_ID2).get().getReceiverUserId()).isEqualTo(_RECEIVER_USER_ID2);

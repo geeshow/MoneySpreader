@@ -11,6 +11,7 @@ sourceCompatibility = '11'
 
 ext {
 	snippetsDir = file('build/generated-snippets')
+	resourcesDir = file('src/main/resources')
 }
 
 configurations {
@@ -52,7 +53,6 @@ asciidoctor {
 
 bootJar {
 	dependsOn asciidoctor
-	from ("${asciidoctor.outputDir}/html5") {
-		into 'static/docs'
-	}
+	from file("${asciidoctor.outputDir}/html5/")
+	into file("${resourcesDir}/static/docs")
 }

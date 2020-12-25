@@ -14,3 +14,8 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 
+app:
+  config:
+    api-host: api.geeshow.com
+    docs-host: docs.geeshow.com
+    

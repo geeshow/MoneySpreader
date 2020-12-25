@@ -1,8 +1,12 @@
 package com.geeshow.kakaopay.MoneySpreader.controller;
 
+import com.geeshow.kakaopay.MoneySpreader.constant.HttpErrorMessages;
+import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
+import com.geeshow.kakaopay.MoneySpreader.exception.InvalidPathException;
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ApiError;
 import com.geeshow.kakaopay.MoneySpreader.mapper.SpreaderMapper;
 import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +35,8 @@ public class SpreaderController {
 
     @PostMapping
     public ResponseEntity<ResponseSpreadDto> spread(
-            @RequestHeader("X-USER-ID") @Positive int userId,
-            @RequestHeader("X-ROOM-ID") @NotBlank String roomID,
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_ROOM_ID) @NotBlank String roomID,
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_USER_ID) @Positive int userId,
             @RequestBody @Valid SpreaderDto.RequestSpreadDto requestSpreadDto) {
 
         String token = spreaderService.spread(
@@ -44,35 +48,44 @@ public class SpreaderController {
                         .token(token)
                         .build()
                         .add(linkTo(SpreaderController.class).withSelfRel())
-                        .add(linkTo(methodOn(SpreaderController.class).read(token, userId)).withRel("read"))
+                        .add(linkTo(methodOn(SpreaderController.class).read(roomID, userId, token)).withRel("read"))
+                        .add(linkTo(methodOn(SpreaderController.class).receive(token, userId, "roomId")).withRel("receipt"))
                         .add(Link.of("/docs/index.html#spreader").withRel("profile"));
 
         return ResponseEntity.created(
-                linkTo(methodOn(SpreaderController.class).read(token, userId)).slash(token).toUri())
+                linkTo(methodOn(SpreaderController.class).read(roomID, userId, token)).slash(token).toUri())
                 .body(responseSpreadDto);
     }
 
     @GetMapping("/{token}")
     public ResponseEntity<SpreaderDto.ResponseReadDto> read(
-            @PathVariable String token, @RequestHeader("X-USER-ID") @Positive int userId) {
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_ROOM_ID) @NotBlank String roomID,
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_USER_ID) @Positive int userId,
+            @PathVariable String token) {
 
-        Spreader spreader = spreaderService.read(token, userId);
+        Spreader spreader = spreaderService.read(roomID, userId, token);
         SpreaderDto.ResponseReadDto responseReadDto = spreaderMapper.toDto(spreader);
 
-        responseReadDto.add(linkTo(methodOn(SpreaderController.class).read(token, userId)).withSelfRel())
+        responseReadDto.add(linkTo(methodOn(SpreaderController.class).read(roomID, userId, token)).withSelfRel())
                 .add(linkTo(SpreaderController.class).withRel("spreader"))
-//                .add(linkTo(methodOn(SpreaderController.class).receive(token, userId, "roomId")).withRel("receiving"))
+                .add(linkTo(methodOn(SpreaderController.class).receive("roomId", userId, token)).withRel("receipt"))
                 .add(Link.of("/docs/index.html#read").withRel("profile"));
         return ResponseEntity.ok(responseReadDto);
     }
 
-    @PutMapping("/{token}")
-    public ResponseEntity<ResponseReceiveDto> receive(
-            @PathVariable String token,
-            @RequestHeader("X-USER-ID") @Positive int userId,
-            @RequestHeader("X-ROOM-ID") @NotBlank String roomID) {
+    @GetMapping
+    public ResponseEntity<SpreaderDto.ResponseReadDto> read() {
+        throw new InvalidPathException("{token}");
+    }
 
-        SpreaderTicket receivedTicket = spreaderService.receive(roomID, token, userId);
+    @PutMapping("/receipt/{token}")
+    public ResponseEntity<ResponseReceiveDto> receive(
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_ROOM_ID) @NotBlank String roomID,
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_USER_ID) @Positive int userId,
+            @PathVariable String token
+            ) {
+
+        SpreaderTicket receivedTicket = spreaderService.receive(roomID, userId, token);
 
         ResponseReceiveDto responseReceiveDto =
                 ResponseReceiveDto.builder()
@@ -81,10 +94,16 @@ public class SpreaderController {
                         .add(
                                 linkTo(methodOn(SpreaderController.class).receive(token, userId, roomID))
                                         .withSelfRel())
-                        .add(linkTo(SpreaderController.class).withRel("sprinkling"))
-                        .add(linkTo(methodOn(SpreaderController.class).read(token, userId)).withRel("read"))
-                        .add(Link.of("/docs/index.html#receiving").withRel("profile"));
+                        .add(linkTo(SpreaderController.class).withRel("spreader"))
+                        .add(Link.of("/docs/index.html#receipt").withRel("profile"));
 
         return ResponseEntity.ok(responseReceiveDto);
     }
+
+
+    @PutMapping("/receipt")
+    public ResponseEntity<ApiError> receive() {
+        throw new InvalidPathException("{token}");
+    }
+
 }
