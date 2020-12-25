@@ -1,32 +1,32 @@
 package com.geeshow.kakaopay.MoneySpreader.mapper;
 
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
-import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseRead;
-import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseRead.ResponseReadBuilder;
+import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseReadDto;
+import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseReadDto.ResponseReadDtoBuilder;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2020-12-24T23:36:16+0900",
+    date = "2020-12-25T12:36:37+0900",
     comments = "version: 1.3.1.Final, compiler: javac, environment: Java 11.0.7 (AdoptOpenJDK)"
 )
 @Component
 public class SpreaderMapperImpl extends SpreaderMapper {
 
     @Override
-    public ResponseRead toDto(Spreader spreader) {
+    public ResponseReadDto toDto(Spreader spreader) {
         if ( spreader == null ) {
             return null;
         }
 
-        ResponseReadBuilder responseRead = ResponseRead.builder();
+        ResponseReadDtoBuilder responseReadDto = ResponseReadDto.builder();
 
-        responseRead.receipts( mapReceipts( spreader ) );
-        responseRead.receiptAmount( mapReceiptAmount( spreader ) );
-        responseRead.spreadDatetime( spreader.getCreateDate() );
-        responseRead.spreadAmount( spreader.getAmount() );
+        responseReadDto.receipts( mapReceipts( spreader ) );
+        responseReadDto.receiptAmount( mapReceiptAmount( spreader ) );
+        responseReadDto.spreadDatetime( spreader.getCreateDate() );
+        responseReadDto.spreadAmount( spreader.getAmount() );
 
-        return responseRead.build();
+        return responseReadDto.build();
     }
 }

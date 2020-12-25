@@ -1,6 +1,7 @@
 package com.geeshow.kakaopay.MoneySpreader.service;
 
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
+import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
 
 public interface SpreaderService {
     /**
@@ -31,5 +32,5 @@ public interface SpreaderService {
      * @param userId 사용자 ID
      * @return 뿌리기 현재 상태
      */
-    long receive(String roomId, String token, long userId);
+    SpreaderTicket receive(String roomId, String token, long userId);
 }

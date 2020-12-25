@@ -35,6 +35,7 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         KakaoUser kakaoUser = kakaoUserRepository.findById(userId).get();
 
+        // TODO KakaoUser Domain 으로 로직 이동
         // 출금 처리
         kakaoUser.withdraw(amount);
 
@@ -59,7 +60,7 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .build();
 
         // 뿌리기 티켓 등록(with 출금 처리)
-        spreader.registeTickets(ticketGenerator);
+        spreader.registerTickets(ticketGenerator);
 
         return spreaderRepository.save(spreader);
     }
@@ -97,7 +98,7 @@ public class SpreaderServiceImpl implements SpreaderService {
 
     @Override
     @Transactional
-    public long receive(String roomId, String token, long receiverUserId) {
+    public SpreaderTicket receive(String roomId, String token, long receiverUserId) {
 
         validateReceive(roomId, token, receiverUserId);
 
@@ -107,15 +108,14 @@ public class SpreaderServiceImpl implements SpreaderService {
         // 수취인 사용자 조회
         KakaoUser kakaoUser = kakaoUserRepository.findById(receiverUserId).get();
 
-        // 뿌리기 수취
-        long receiptAmount = spreader.findReceivableTicket()
-                .orElseThrow(() -> new NotRemainTicketException(roomId))
-                .receiveTicket(kakaoUser);
+        // 수취 가능한 뿌리기 티켓 획득
+        SpreaderTicket receivableTicket = spreader.findReceivableTicket()
+                .orElseThrow(() -> new NotRemainTicketException(roomId));
 
-        // 입금 처리
-        kakaoUser.deposit(receiptAmount);
+        // 뿌리기 티켓 수취
+        receivableTicket.receiveTicket(kakaoUser);
 
-        return receiptAmount;
+        return receivableTicket;
     }
 
     private void validateReceive(String roomId, String token, long receiverUserId) {

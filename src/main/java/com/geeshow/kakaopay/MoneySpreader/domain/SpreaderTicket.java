@@ -29,6 +29,10 @@ public class SpreaderTicket extends BaseEntity {
     public long receiveTicket(KakaoUser receiver) {
 
         setReceiverUserId(receiver.getId());
+
+        // 입금 처리
+        receiver.deposit(getAmount());
+
         return getAmount();
     }
 

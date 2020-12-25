@@ -18,11 +18,9 @@ public class KakaoUser extends BaseEntity {
 
     public void withdraw(Long amount) {
         this.balance -= amount;
-        System.out.println("출금! " + amount);
     }
 
     public void deposit(Long amount) {
         this.balance += amount;
-        System.out.println("입금! " + amount);
     }
 }

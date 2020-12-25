@@ -21,36 +21,38 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Spreader extends BaseEntity {
 
-    // transaction token
+    // 뿌리기 토큰
     @Column(unique = true, nullable = false, length = 3)
     private String token;
 
-    // spreading total amount
+    // 뿌리기 총 금액
     @Column(nullable = false)
     private Long amount;
 
-    // room number
+    // 뿌리기 방 번호
     @Column private String roomId;
 
-    // spreader user id
+    // 뿌리기 사용자 ID
     @Column private Long spreaderUserId;
 
-    // spreading or receiver number
+    // 뿌리기 건수
     @Column(nullable = false)
     private Integer ticketCount;
 
+    // 조회 만료 일시
     @Column(nullable = false)
     private LocalDateTime expireReadDate;
 
+    // 수취 만료 일시
     @Column(nullable = false)
     private LocalDateTime expireReceiptDate;
 
-    // Receiver Users
+    // 뿌리기 발행 티켓 목록
     @OneToMany(mappedBy = "spreader", cascade = CascadeType.ALL)
     @Builder.Default
     List<SpreaderTicket> spreaderTickets = new ArrayList<>();
 
-    public void registeTickets(TicketGenerator<Ticket> ticketGenerator) {
+    public void registerTickets(TicketGenerator<Ticket> ticketGenerator) {
         ticketGenerator.generate().stream()
                 .forEach(ticket -> {
                     addSpreaderTicket(ticket.getAmount());

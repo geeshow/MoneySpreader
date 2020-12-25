@@ -271,9 +271,9 @@ class SpreaderServiceTest {
         String token = spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount).getToken();
 
         //when
-        long receive1 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID1);
-        long receive2 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID2);
-        long receive3 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID3);
+        long receive1 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID1).getAmount();
+        long receive2 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID2).getAmount();
+        long receive3 = spreaderService.receive(_ROOM_ID, token, _RECEIVER_USER_ID3).getAmount();
 
         //then
         Spreader spreader = spreaderRepository.findByTokenAndRoomId(token, _ROOM_ID).get();

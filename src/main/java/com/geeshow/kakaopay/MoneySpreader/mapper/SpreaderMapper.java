@@ -1,7 +1,7 @@
 package com.geeshow.kakaopay.MoneySpreader.mapper;
 
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
-import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseRead;
+import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto.ResponseReadDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -16,13 +16,13 @@ public abstract class SpreaderMapper {
     @Mapping(target = "spreadAmount", source = "amount")
     @Mapping(target = "receipts", source = "spreader")
     @Mapping(target = "receiptAmount", source = "spreader")
-    public abstract ResponseRead toDto(Spreader spreader);
+    public abstract ResponseReadDto toDto(Spreader spreader);
 
-    List<ResponseRead.TicketDto> mapReceipts(Spreader spreader) {
+    List<ResponseReadDto.TicketDto> mapReceipts(Spreader spreader) {
         return spreader.getReceivedTickets()
                 .stream()
                 .map(ticket ->
-                        ResponseRead.TicketDto.builder()
+                        ResponseReadDto.TicketDto.builder()
                             .amount(ticket.getAmount())
                             .userId(ticket.getReceiverUserId())
                             .build()
