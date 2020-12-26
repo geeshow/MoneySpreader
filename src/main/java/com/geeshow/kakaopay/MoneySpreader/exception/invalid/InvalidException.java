@@ -5,7 +5,7 @@ import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 
 public class InvalidException extends BusinessException {
 
-    public InvalidException(ErrorCode code, String ...values ) {
-        super(code, values);
+    public InvalidException(ErrorCode code, String ...extraErrorInfo ) {
+        super(code, extraErrorInfo);
     }
 }

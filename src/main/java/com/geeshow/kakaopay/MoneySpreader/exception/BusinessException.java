@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 public class BusinessException extends RuntimeException {
     private final String code;
     private final String message;
-    private final String values;
+    private final String extraErrorInfo;
     private final HttpStatus status;
 
-    public BusinessException(ErrorCode code, String ...values ) {
+    public BusinessException(ErrorCode code, String ...extraErrorInfo) {
         super(code.getMessage());
         this.code = code.getCode();
         this.message = code.getMessage();
         this.status = code.getStatus();
-        this.values =  Arrays.stream(values).collect(Collectors.joining(", "));
+        this.extraErrorInfo =  Arrays.stream(extraErrorInfo).collect(Collectors.joining(", "));
     }
 }

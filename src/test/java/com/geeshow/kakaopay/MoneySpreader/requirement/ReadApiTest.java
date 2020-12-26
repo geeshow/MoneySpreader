@@ -6,6 +6,7 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
@@ -176,8 +177,9 @@ public class ReadApiTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("status").value(ErrorCode.NotAllowReadTicketException.getStatus().value()))
+                .andExpect(jsonPath("code").value(ErrorCode.NotAllowReadTicketException.getCode()))
+                .andExpect(jsonPath("message").value(ErrorCode.NotAllowReadTicketException.getMessage()))
                 .andExpect(jsonPath("detailMessage").exists())
         ;
     }
@@ -205,8 +207,9 @@ public class ReadApiTest {
                 .andExpect(status().isNotFound())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.value()))
-                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("status").value(ErrorCode.NotFoundSpreaderEntityException.getStatus().value()))
+                .andExpect(jsonPath("code").value(ErrorCode.NotFoundSpreaderEntityException.getCode()))
+                .andExpect(jsonPath("message").value(ErrorCode.NotFoundSpreaderEntityException.getMessage()))
                 .andExpect(jsonPath("detailMessage").exists())
         ;
     }

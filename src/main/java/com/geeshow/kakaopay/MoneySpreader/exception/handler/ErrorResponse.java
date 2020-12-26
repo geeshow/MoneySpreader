@@ -28,7 +28,7 @@ public class ErrorResponse {
         this.status = e.getStatus().value();
         this.message = e.getMessage();
         this.code = e.getCode();
-        this.detailMessage = e.toString();
+        this.detailMessage = e.getExtraErrorInfo();
     }
 
     public ErrorResponse(ErrorCode errorCode, Throwable e) {

@@ -284,7 +284,7 @@ class SpreaderControllerTest {
                                 fieldWithPath("status").description("ERROR HTTP STATUS CODE"),
                                 fieldWithPath("message").description("기본 오류 메시지"),
                                 fieldWithPath("code").description("업무 오류 코드"),
-                                fieldWithPath("detailMessage").description("Stack trace")
+                                fieldWithPath("detailMessage").description("Stack trace 또는 참고정보")
                         )
                         .and(subsectionWithPath("detailErrors").type(JsonFieldType.ARRAY).description("오류 상세 메시지(해당 시)"),
                             subsectionWithPath("detailErrors[].object").type(JsonFieldType.STRING).description("오류 발생 객체"),

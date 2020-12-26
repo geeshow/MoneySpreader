@@ -55,6 +55,9 @@
 ### 3. 조회
 ![조회플로어](https://user-images.githubusercontent.com/20357042/103145231-2d81de00-477a-11eb-8e53-43bc96b1d88e.png)
 
+## Exception Class Diagram
+![Exception Class Diagram](https://user-images.githubusercontent.com/20357042/103152950-356c6d00-47d0-11eb-94aa-bee9b77daf52.png)
+
 ## 카카오페이 뿌리기 REST API Guide
 
 ### 공통 Header
@@ -204,11 +207,12 @@ Content-Length: 291
   }
 }
 ```
-### 오류코드
+### 오류응답
 |Path|Type|Description|
 |---|---|---|
 |timestamp|String|오류 발생 시간|
 |status|String|ERROR HTTP STATUS CODE|
+|code|String|업무 오류 코드(하단 코드 명세 참조)|
 |message|String|기본 오류 메시지|
 |detailMessage|String|Stack trace|
 |detailErrors|Array|오류 상세 메시지(해당 시)|
@@ -233,6 +237,26 @@ Content-Length: 1090
     ,"message":"뿌리기 인원 오류. 양수로 입력해야 합니다."}
 ]}
 ```
+
+### 업무 오류 코드 명세
+| 코드 | 내용 | HTTP STATUS |
+| ---|---|---|
+|E001|존재하지 않는 사용자 ID입니다.|404|
+|E002|해당 룸에 존재하지 않는 사용자 ID입니다.|404|
+|E003|존재하지 않는 룸 입니다.|404|
+|E004|입력된 조건의 뿌리기가 존재하지 않습니다.|404|
+|B001|뿌린 돈은 한번만 수령 가능 합니다.|500|
+|B002|뿌리기 가능 건수 초과.|500|
+|B003|뿌리기 조회 가능일이 만료되었습니다.|500|
+|B004|뿌리기 수령 가능 시간이 초과했습니다.|500|
+|B005|뿌린 정보는 본인만 조회할 수 있습니다.|500|
+|B006|뿌리기 금액이 충분하지 않습니다.|500|
+|B007|뿌려진 모든 금액이 소진되었습니다.|500|
+|B008|본인이 뿌린 돈은 본인이 받을 수 없습니다.|500|
+|H001|지원하지 않은 HTTP method 호출입니다.|405|
+|H002|필수 헤더값이 누락되었습니다.|400|
+|H003|필수 입력값이 누락되었습니다.|400|
+|Z001|업무 처리 중 예외적 오류가 발생하였습니다.|500|
+
 TODO
 출금처리 위치 변경(정규화 해야함)
-Exception 계층 추가(HTTP ERROR STATUS 별로 작업)

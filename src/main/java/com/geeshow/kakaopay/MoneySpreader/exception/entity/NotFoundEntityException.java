@@ -5,7 +5,7 @@ import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 
 public class NotFoundEntityException extends BusinessException {
 
-    public NotFoundEntityException(ErrorCode code, String ...values ) {
-        super(code, values);
+    public NotFoundEntityException(ErrorCode code, String ...extraErrorInfo ) {
+        super(code, extraErrorInfo);
     }
 }

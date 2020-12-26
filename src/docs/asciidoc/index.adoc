@@ -120,4 +120,9 @@ operation::read[snippets='path-parameters,response-fields,links,http-request,htt
 
 operation::receipt[snippets='path-parameters,response-fields,links,http-request,http-response']
 
+[[resources-errors]]
+=== 오류 응답
+
+operation::errors[snippets='response-fields,response-body,links,http-response']
+
 
