@@ -74,6 +74,10 @@ public class Spreader extends BaseEntity {
         return this.expireReceiptDate.isBefore(LocalDateTime.now());
     }
 
+    public boolean isSpreader(long userId) {
+        return this.getSpreaderUserId().longValue() == userId;
+    }
+
     public boolean isReceiverAlready(long userId) {
         return spreaderTickets.stream()
                 .anyMatch(ticket ->

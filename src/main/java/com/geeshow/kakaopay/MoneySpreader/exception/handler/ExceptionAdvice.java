@@ -1,8 +1,8 @@
 package com.geeshow.kakaopay.MoneySpreader.exception.handler;
 
 import com.geeshow.kakaopay.MoneySpreader.constant.HttpErrorMessages;
-import com.geeshow.kakaopay.MoneySpreader.exception.invalid.InvalidPathException;
 import com.geeshow.kakaopay.MoneySpreader.exception.BusinessException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -62,8 +62,9 @@ public class ExceptionAdvice {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidPathException.class)
-    protected ResponseEntity<ApiError> handle(InvalidPathException e) {
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    protected ResponseEntity<ApiError> handle(EntityNotFoundException e) {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, e.getLocalizedMessage(), e);
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }

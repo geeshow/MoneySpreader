@@ -5,8 +5,8 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserException;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserNotFoundException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomNotFoundException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ExceedSpreadTicketCountException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ExpiredReadSpreaderException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.NotRemainTicketException;
@@ -167,7 +167,7 @@ class SpreaderServiceTest {
         long notExistUserId = 12130192019L;
 
         //when
-        NotFoundKakaoUserException exception = assertThrows(NotFoundKakaoUserException.class
+        NotFoundKakaoUserNotFoundException exception = assertThrows(NotFoundKakaoUserNotFoundException.class
                 , ()-> spreaderService.spread(_ROOM_ID, notExistUserId, amount, ticketCount));
         String message = exception.getMessage();
 
@@ -185,7 +185,7 @@ class SpreaderServiceTest {
         String notExistRoomId = "testtesttest111";
 
         //when
-        NotFoundRoomException exception = assertThrows(NotFoundRoomException.class
+        NotFoundRoomNotFoundException exception = assertThrows(NotFoundRoomNotFoundException.class
                 , ()-> spreaderService.spread(notExistRoomId, _USER_ID, amount, ticketCount));
         String message = exception.getMessage();
 

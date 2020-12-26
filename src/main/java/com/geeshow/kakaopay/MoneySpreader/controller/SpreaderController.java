@@ -4,8 +4,7 @@ import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
-import com.geeshow.kakaopay.MoneySpreader.exception.invalid.InvalidPathException;
-import com.geeshow.kakaopay.MoneySpreader.exception.handler.ApiError;
+
 import com.geeshow.kakaopay.MoneySpreader.mapper.SpreaderMapper;
 import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
 import lombok.RequiredArgsConstructor;
@@ -72,11 +71,6 @@ public class SpreaderController {
         return ResponseEntity.ok(responseReadDto);
     }
 
-    @GetMapping
-    public ResponseEntity<SpreaderDto.ResponseReadDto> read() {
-        throw new InvalidPathException("{token}");
-    }
-
     @PutMapping("/receipt/{token}")
     public ResponseEntity<ResponseReceiveDto> receive(
             @RequestHeader(SpreaderConstant.HTTP_HEADER_ROOM_ID) @NotBlank String roomID,
@@ -99,10 +93,5 @@ public class SpreaderController {
         return ResponseEntity.ok(responseReceiveDto);
     }
 
-
-    @PutMapping("/receipt")
-    public ResponseEntity<ApiError> receive() {
-        throw new InvalidPathException("{token}");
-    }
 
 }

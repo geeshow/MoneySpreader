@@ -107,10 +107,10 @@ public class ReadApiTest {
         //then : 오류 발생
         actions
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isMethodNotAllowed())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.METHOD_NOT_ALLOWED.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -202,10 +202,10 @@ public class ReadApiTest {
         //then : 오류 발생
         actions
                 .andDo(print())
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isNotFound())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;

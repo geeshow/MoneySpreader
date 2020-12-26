@@ -6,7 +6,7 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomNotFoundException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.AlreadyReceivedTicketException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ExpiredTicketReceiptException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ReceiveOwnTicketException;
@@ -128,10 +128,10 @@ public class ReceiptApiTest {
         //then : 오류 발생
         actions
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isMethodNotAllowed())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.METHOD_NOT_ALLOWED.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -219,7 +219,7 @@ public class ReceiptApiTest {
         String token = spreaderService.spread(anotherRoom, anotherSpreader.getId(), 10000, 1).getToken();
 
         //when & then : 다른방 사용자가 ANOTHER_ROOM_10 방의 번호와 토큰으로 수취를 시도하여 오류.
-        NotFoundRoomException exception = assertThrows(NotFoundRoomException.class
+        NotFoundRoomNotFoundException exception = assertThrows(NotFoundRoomNotFoundException.class
                 , ()-> spreaderService.receive(anotherRoom, _RECEIVER_USER_ID1, token));
 
         String message = exception.getMessage();
