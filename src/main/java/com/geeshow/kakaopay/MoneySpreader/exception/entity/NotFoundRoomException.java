@@ -1,8 +1,9 @@
-package com.geeshow.kakaopay.MoneySpreader.exception;
+package com.geeshow.kakaopay.MoneySpreader.exception.entity;
 
 import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
+import com.geeshow.kakaopay.MoneySpreader.exception.BusinessException;
 
-public class NotFoundRoomException extends SpreaderException {
+public class NotFoundRoomException extends EntityException {
     public NotFoundRoomException(String roomId) {
         super("존재하지 않는 룸 입니다. roomId:" + roomId);
     }

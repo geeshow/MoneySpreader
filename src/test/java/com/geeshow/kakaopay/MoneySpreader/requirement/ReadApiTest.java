@@ -6,11 +6,6 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
-import com.geeshow.kakaopay.MoneySpreader.exception.AlreadyReceivedTicketException;
-import com.geeshow.kakaopay.MoneySpreader.exception.ExpiredTicketReceiptException;
-import com.geeshow.kakaopay.MoneySpreader.exception.NotFoundRoomException;
-import com.geeshow.kakaopay.MoneySpreader.exception.ReceiveOwnTicketException;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
@@ -34,17 +29,10 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -122,8 +110,7 @@ public class ReadApiTest {
                 .andExpect(status().isNotFound())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.name()))
-                .andExpect(jsonPath("statusCode").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -189,8 +176,7 @@ public class ReadApiTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
-                .andExpect(jsonPath("statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -219,8 +205,7 @@ public class ReadApiTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
-                .andExpect(jsonPath("statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -250,8 +235,7 @@ public class ReadApiTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
-                .andExpect(jsonPath("statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;

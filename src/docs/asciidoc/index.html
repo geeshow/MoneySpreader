@@ -609,11 +609,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ERROR HTTP STATUS</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>statusCode</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ERROR HTTP STATUS CODE</p></td>
 </tr>
 <tr>
@@ -662,7 +657,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 Content-Type: application/hal+json
 Content-Length: 1089
 
-{"timestamp":"2020-12-26T16:03:03.49598","status":"BAD_REQUEST","statusCode":400,"message":"BODY에 필수 값이 잘못되었습니다.","detailMessage":"org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [2] in public org.springframework.http.ResponseEntity&lt;com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto$ResponseSpreadDto&gt; com.geeshow.kakaopay.MoneySpreader.controller.SpreaderController.spread(java.lang.String,int,com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto$RequestSpreadDto): [Field error in object 'requestSpreadDto' on field 'number': rejected value [0]; codes [Positive.requestSpreadDto.number,Positive.number,Positive.int,Positive]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [requestSpreadDto.number,number]; arguments []; default message [number]]; default message [뿌리기 인원 오류. 양수로 입력해야 합니다.]] ","detailErrors":[{"object":"requestSpreadDto","field":"number","rejectedValue":0,"message":"뿌리기 인원 오류. 양수로 입력해야 합니다."}]}</code></pre>
+{"timestamp":"2020-12-26T16:03:03.49598","status":400,"message":"BODY에 필수 값이 잘못되었습니다.","detailMessage":"org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [2] in public org.springframework.http.ResponseEntity&lt;com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto$ResponseSpreadDto&gt; com.geeshow.kakaopay.MoneySpreader.controller.SpreaderController.spread(java.lang.String,int,com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto$RequestSpreadDto): [Field error in object 'requestSpreadDto' on field 'number': rejected value [0]; codes [Positive.requestSpreadDto.number,Positive.number,Positive.int,Positive]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [requestSpreadDto.number,number]; arguments []; default message [number]]; default message [뿌리기 인원 오류. 양수로 입력해야 합니다.]] ","detailErrors":[{"object":"requestSpreadDto","field":"number","rejectedValue":0,"message":"뿌리기 인원 오류. 양수로 입력해야 합니다."}]}</code></pre>
 </div>
 </div>
 </div>

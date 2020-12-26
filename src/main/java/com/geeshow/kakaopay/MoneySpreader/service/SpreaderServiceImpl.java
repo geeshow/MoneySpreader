@@ -5,7 +5,10 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.exception.*;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundBusinessException;
+import com.geeshow.kakaopay.MoneySpreader.exception.invalid.*;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
@@ -97,7 +100,7 @@ public class SpreaderServiceImpl implements SpreaderService {
     public Spreader read(String roomId, long userId, String token) {
 
         Spreader spreader = spreaderRepository.findByRoomIdAndSpreaderUserIdAndToken(roomId, userId, token)
-                .orElseThrow(() -> new NotFoundSpreaderException(token, userId));
+                .orElseThrow(() -> new NotFoundBusinessException(token, userId));
 
         if ( spreader.isExpiredRead() ) {
             throw new ExpiredReadSpreaderException(
@@ -137,7 +140,7 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         // 뿌리기 조회
         Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
-                .orElseThrow(() -> new NotFoundSpreaderException(token, roomId));
+                .orElseThrow(() -> new NotFoundBusinessException(token, roomId));
 
         // 수취 만료 시간 확인
         if ( spreader.isExpiredReceive() )

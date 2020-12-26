@@ -1,6 +1,6 @@
-package com.geeshow.kakaopay.MoneySpreader.exception;
+package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
-public class AlreadyReceivedTicketException extends RuntimeException {
+public class AlreadyReceivedTicketException extends InvalidException {
 
     public AlreadyReceivedTicketException(long spreaderUserId, String receiptDate) {
 

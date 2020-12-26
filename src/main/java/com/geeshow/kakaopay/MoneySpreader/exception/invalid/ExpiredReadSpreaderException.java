@@ -1,6 +1,6 @@
-package com.geeshow.kakaopay.MoneySpreader.exception;
+package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
-public class ExpiredReadSpreaderException extends RuntimeException {
+public class ExpiredReadSpreaderException extends InvalidException {
 
     public ExpiredReadSpreaderException(String expDate) {
 

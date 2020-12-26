@@ -274,8 +274,7 @@ class SpreaderControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.name()))
-                .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.value()))
                 .andExpect(jsonPath("message").value(HttpErrorMessages.INVALID_BODY_DATA))
                 .andExpect(jsonPath("detailMessage").exists())
                 .andExpect(jsonPath("detailErrors").exists())
@@ -286,8 +285,7 @@ class SpreaderControllerTest {
                 .andDo(document("errors",
                         responseFields(
                                 fieldWithPath("timestamp").description("오류 발생 시간"),
-                                fieldWithPath("status").description("ERROR HTTP STATUS"),
-                                fieldWithPath("statusCode").description("ERROR HTTP STATUS CODE"),
+                                fieldWithPath("status").description("ERROR HTTP STATUS CODE"),
                                 fieldWithPath("message").description("기본 오류 메시지"),
                                 fieldWithPath("detailMessage").description("Stack trace")
                         )
@@ -330,8 +328,7 @@ class SpreaderControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.name()))
-                .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.value()))
                 .andExpect(jsonPath("message").value(HttpErrorMessages.MISSING_HEADER_DATA))
                 .andExpect(jsonPath("detailMessage").exists())
         ;

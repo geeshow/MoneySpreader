@@ -39,10 +39,10 @@
   - return 값은 해당되는 Domain을 넘긴다.
 ##### 4. Domain 컴포넌트의 역할 
   - 단위 업무 로직 구현.
-  - 예외처리를 발생하지 않음.
 ##### 5. 그 외
   - null을 사용하지 않음(Optional 활용).
   - DTO Naming 규칙 : [요청/응답] + 메소드명 + DTO
+  - Exception은 Controller/Service/Domain별로 구분해서 사용한다.
   
  
 ## 기능별 플로어
@@ -208,8 +208,7 @@ Content-Length: 291
 |Path|Type|Description|
 |---|---|---|
 |timestamp|String|오류 발생 시간|
-|status|String|ERROR HTTP STATUS|
-|statusCode|Number|ERROR HTTP STATUS CODE|
+|status|String|ERROR HTTP STATUS CODE|
 |message|String|기본 오류 메시지|
 |detailMessage|String|Stack trace|
 |detailErrors|Array|오류 상세 메시지(해당 시)|
@@ -224,8 +223,7 @@ Content-Type: application/hal+json
 Content-Length: 1090
 
 {"timestamp":"2020-12-26T16:29:11.250093"
-,"status":"BAD_REQUEST"
-,"statusCode":400
+,"status":400
 ,"message":"BODY에 필수 값이 잘못되었습니다."
 ,"detailMessage":"org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [2] in public org.springframework.http.ResponseEntity<com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto$ResponseSpreadDto> com.geeshow.kakaopay.MoneySpreader.controller.SpreaderController.spread(java.lang.String,int,com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto$RequestSpreadDto): [Field error in object 'requestSpreadDto' on field 'number': rejected value [0]; codes [Positive.requestSpreadDto.number,Positive.number,Positive.int,Positive]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [requestSpreadDto.number,number]; arguments []; default message [number]]; default message [뿌리기 인원 오류. 양수로 입력해야 합니다.]] "
 ,"detailErrors":[

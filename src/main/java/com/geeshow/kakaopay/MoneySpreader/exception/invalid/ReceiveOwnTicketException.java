@@ -1,6 +1,6 @@
-package com.geeshow.kakaopay.MoneySpreader.exception;
+package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
-public class ReceiveOwnTicketException extends RuntimeException {
+public class ReceiveOwnTicketException extends InvalidException {
 
     public ReceiveOwnTicketException(long spreaderUserId) {
 

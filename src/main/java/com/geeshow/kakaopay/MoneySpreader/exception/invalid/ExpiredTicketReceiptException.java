@@ -1,6 +1,6 @@
-package com.geeshow.kakaopay.MoneySpreader.exception;
+package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
-public class ExpiredTicketReceiptException extends RuntimeException {
+public class ExpiredTicketReceiptException extends InvalidException {
 
     public ExpiredTicketReceiptException(int minutes) {
 

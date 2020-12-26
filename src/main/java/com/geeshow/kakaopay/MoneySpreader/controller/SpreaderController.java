@@ -1,11 +1,10 @@
 package com.geeshow.kakaopay.MoneySpreader.controller;
 
-import com.geeshow.kakaopay.MoneySpreader.constant.HttpErrorMessages;
 import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
-import com.geeshow.kakaopay.MoneySpreader.exception.InvalidPathException;
+import com.geeshow.kakaopay.MoneySpreader.exception.invalid.InvalidPathException;
 import com.geeshow.kakaopay.MoneySpreader.exception.handler.ApiError;
 import com.geeshow.kakaopay.MoneySpreader.mapper.SpreaderMapper;
 import com.geeshow.kakaopay.MoneySpreader.service.SpreaderService;
