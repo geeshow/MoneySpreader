@@ -39,7 +39,6 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         KakaoUser kakaoUser = kakaoUserRepository.findById(userId).get();
 
-        // TODO KakaoUser Domain 으로 로직 이동
         // 출금 처리
         kakaoUser.withdraw(amount);
 
