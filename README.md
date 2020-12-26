@@ -1,6 +1,14 @@
-# MoneySpreader
+MoneySpreader
+=============
 
 ## 목차
+* [개발 환경](#개발-환경)
+* [핵심 문제해결 전략](#핵심-문제해결-전략)
+* [- 가. 핵심 요구사항 해결 방법](#가.-핵심-요구사항-해결-방법)
+* [- 나. 개발규칙 정의](#나.-개발규칙-정의)
+* [설계 내용 ](#설계-내용 )
+* [기능별 플로어](#기능별-플로어)
+* [카카오페이 뿌리기 REST API Guide](#카카오페이-뿌리기-REST-API-Guide)
 
 ## 개발 환경
 - Language: Java 11
@@ -10,18 +18,18 @@
 
 ## 핵심 문제해결 전략
 ### 가. 핵심 요구사항 해결 방법
-##### 1. 다수의 서버, 다수의 인스턴스에 대한 데이터 정합성
-  - Service Transactional Annotation 적용
-  - JPA Version Lock 사용
-##### 2. 토큰 유틸리티 개발
-  - SecureRandom으로 예측 불가능한 난수 값 생성.
-##### 3. 티켓(뿌리기용) 생성자 유틸리티 개발 
+ 1. 다수의 서버, 다수의 인스턴스에 대한 데이터 정합성
+  - `Service Transactional Annotation` 적용
+  - `JPA Version Lock` 사용
+ 1. 토큰 유틸리티 개발
+  - `SecureRandom`으로 예측 불가능한 난수 값 생성.
+ 1. 티켓(뿌리기용) 생성자 유틸리티 개발 
   - 주어진 금액을 주어진 건수로 랜덤하게 나누는 유틸리티.
-  - 생성된 티켓들을 다시 한번 더 무작위 Sorting(Comparable 인터페이스 적용).
-##### 4. 조회 및 받기 유효시간
+  - 생성된 티켓들을 다시 한번 더 무작위 Sorting(`Comparable` 인터페이스 적용).
+ 1. 조회 및 받기 유효시간
   - 조회유효시간, 받기유효시간 컬럼을 추가
-##### 5. 실패 응답 처리
-  - RestControllerAdvice 적용
+ 1. 실패 응답 처리
+  - `RestControllerAdvice` 적용
   - Exception을 HTTP status 단위로 계층적 분리 
      
 ### 나. 개발규칙 정의
@@ -47,7 +55,7 @@
 ## 설계 내용  
 ### 1. DB 모델링
 ![ExceptionClass](https://user-images.githubusercontent.com/20357042/103153774-45874b00-47d6-11eb-9529-5b1fb0dfb00f.png)
-- Entity를 단순히 구성하기 위해 대화방 Table 없이 구성
+> 초기 설계시 Room Entity를 두었으나 관계 설정을 단순히 구성하기 위해 Room Table 없이 구성하였다.
 
 ### 2. Exception Class Diagram
 ![ExceptionClass](https://user-images.githubusercontent.com/20357042/103153291-dc520880-47d2-11eb-8526-6524b2f96c97.png)
@@ -56,31 +64,31 @@
 ## 기능별 플로어
 ### 1. 뿌리기
 ![뿌리기플로어](https://user-images.githubusercontent.com/20357042/103145026-c7478c00-4776-11eb-805f-572e5487b27f.png)
- 
+-- 
 ### 2. 받기
 ![받기플로어](https://user-images.githubusercontent.com/20357042/103145712-07603c00-4782-11eb-9994-2a4d41907298.png)
-
+--
 ### 3. 조회
 ![조회플로어](https://user-images.githubusercontent.com/20357042/103145231-2d81de00-477a-11eb-8e53-43bc96b1d88e.png)
-
+--
 
 ## 카카오페이 뿌리기 REST API Guide
 
-### 공통 Header
+### 가. 공통 Header
 | Name | Description
 | --- | --- |
-|X-USER-ID | 사용자 ID |
-|X-ROOM-ID | 대화방 ID |
+|`X-USER-ID`| 사용자 ID |
+|`X-ROOM-ID`| 대화방 ID |
 
-### 뿌리기 API
-#### 요청
-- method : POST
-- url : /v1/spreder
+### 나. 뿌리기 API
+1. 요청
+ - method : `POST`
+ - url : `/v1/spreder`
 
 |Path|Type|Description|
 |---|---|---|
-|amount|Number|뿌리기 금액|
-|number|Number|받을 대상 맴버수|
+|`amount`|Number|뿌리기 금액|
+|`number`|Number|받을 대상 맴버수|
 - request sample
 ```
 POST /v1/spreader HTTP/1.1
@@ -93,10 +101,11 @@ Host: docs.geeshow.com:8080
 
 {"amount":20000,"number":3}
 ```
-#### 응답
+2. 응답
+
 | Path | Type | Description |
 | --- | --- | --- |
-| token | String | 뿌리기 token |
+| `token` | String | 뿌리기 token |
 - response sample
 ```
 HTTP/1.1 201 Created
@@ -122,11 +131,11 @@ Content-Length: 370
   }
 }
 ```
-### 뿌리기 조회 API
-#### 요청
-- method : get
-- url : /v1/spreder/{token}
-- request sample
+### 다. 뿌리기 조회 API
+1. 요청
+ - method : `get`
+ - url : `/v1/spreder/{token}`
+ - request sample
 ```
 GET /v1/spreader/B3x HTTP/1.1
 Content-Type: application/json;charset=UTF-8
@@ -136,14 +145,15 @@ Accept: application/hal+json
 Host: docs.geeshow.com:8080
 ```
 
-#### 응답
+2. 응답
+
 |Path|Type|Description|
 |---|---|---|
-|spreadDatetime|String|뿌린 시각|
-|spreadAmount|Number|뿌린 금액|
-|receiptAmount|Number|현재까지 받은 금액|
-|receipts[].userId|Number|받은 사용자 ID|
-|receipts[].amount|Number|받은 금액|
+|`spreadDatetime`|String|뿌린 시각|
+|`spreadAmount`|Number|뿌린 금액|
+|`receiptAmount`|Number|현재까지 받은 금액|
+|`receipts[].userId`|Number|받은 사용자 ID|
+|`receipts[].amount`|Number|받은 금액|
 - response sample
 ```
 HTTP/1.1 200 OK
@@ -175,10 +185,10 @@ Content-Length: 514
 }
 ```
 
-### 받기 API
-#### 요청
-- method : put
-- url : /v1/spreder/receipt/{token}
+### 리. 받기 API
+1. 요청
+- method : `put`
+- url : `/v1/spreder/receipt/{token}`
 - request sample
 ```
 PUT /v1/spreader/receipt/H2d HTTP/1.1
@@ -188,10 +198,11 @@ X-ROOM-ID: X-ROOM-ID-20
 Accept: application/hal+json
 Host: docs.geeshow.com:8080
 ```
-#### 응답
+2. 응답
+
 |Path|Type|Description|
 |---|---|---|
-|amount|Number|받은 금액|
+|`amount`|Number|받은 금액|
 - response sample
 ```
 HTTP/1.1 200 OK
@@ -212,20 +223,23 @@ Content-Length: 291
     }
   }
 }
-```
-### 오류응답
+```          
+--
+### 라. 오류응답
+##### 1. 응답 Response
+
 |Path|Type|Description|
 |---|---|---|
-|timestamp|String|오류 발생 시간|
-|status|String|ERROR HTTP STATUS CODE|
-|code|String|업무 오류 코드(하단 코드 명세 참조)|
-|message|String|기본 오류 메시지|
-|detailMessage|String|Stack trace|
-|detailErrors|Array|오류 상세 메시지(해당 시)|
-|detailErrors[].object|String|오류 발생 객체|
-|detailErrors[].field|String|오류 필드|
-|detailErrors[].rejectedValue|Number|오류 발생 값|
-|detailErrors[].message|String|오류 메시지|
+|`timestamp`|String|오류 발생 시간|
+|`status`|String|ERROR HTTP STATUS CODE|
+|`code`|String|업무 오류 코드(하단 코드 명세 참조)|
+|`message`|String|기본 오류 메시지|
+|`detailMessage`|String|Stack trace|
+|`detailErrors`|Array|오류 상세 메시지(해당 시)|
+|`detailErrors[].object`|String|오류 발생 객체|
+|`detailErrors[].field`|String|오류 필드|
+|`detailErrors[].rejectedValue`|Number|오류 발생 값|
+|`detailErrors[].message`|String|오류 메시지|
 - response sample
 ```
 HTTP/1.1 400 Bad Request
@@ -244,22 +258,25 @@ Content-Length: 1090
 ]}
 ```
 
-### 업무 오류 코드 명세
+##### 2. 업무 오류 코드 명세
 | 코드 | 내용 | HTTP STATUS |
 | ---|---|---|
-|E001|존재하지 않는 사용자 ID입니다.|404|
-|E002|해당 룸에 존재하지 않는 사용자 ID입니다.|404|
-|E003|존재하지 않는 룸 입니다.|404|
-|E004|입력된 조건의 뿌리기가 존재하지 않습니다.|404|
-|B001|뿌린 돈은 한번만 수령 가능 합니다.|500|
-|B002|뿌리기 가능 건수 초과.|500|
-|B003|뿌리기 조회 가능일이 만료되었습니다.|500|
-|B004|뿌리기 수령 가능 시간이 초과했습니다.|500|
-|B005|뿌린 정보는 본인만 조회할 수 있습니다.|500|
-|B006|뿌리기 금액이 충분하지 않습니다.|500|
-|B007|뿌려진 모든 금액이 소진되었습니다.|500|
-|B008|본인이 뿌린 돈은 본인이 받을 수 없습니다.|500|
-|H001|지원하지 않은 HTTP method 호출입니다.|405|
-|H002|필수 헤더값이 누락되었습니다.|400|
-|H003|필수 입력값이 누락되었습니다.|400|
-|Z001|업무 처리 중 예외적 오류가 발생하였습니다.|500|
+|`E001`|존재하지 않는 사용자 ID입니다.|404|
+|`E002`|해당 룸에 존재하지 않는 사용자 ID입니다.|404|
+|`E003`|존재하지 않는 룸 입니다.|404|
+|`E004`|입력된 조건의 뿌리기가 존재하지 않습니다.|404|
+|`B001`|뿌린 돈은 한번만 수령 가능 합니다.|500|
+|`B002`|뿌리기 가능 건수 초과.|500|
+|`B003`|뿌리기 조회 가능일이 만료되었습니다.|500|
+|`B004`|뿌리기 수령 가능 시간이 초과했습니다.|500|
+|`B005`|뿌린 정보는 본인만 조회할 수 있습니다.|500|
+|`B006`|뿌리기 금액이 충분하지 않습니다.|500|
+|`B007`|뿌려진 모든 금액이 소진되었습니다.|500|
+|`B008`|본인이 뿌린 돈은 본인이 받을 수 없습니다.|500|
+|`H001`|지원하지 않은 HTTP method 호출입니다.|405|
+|`H002`|필수 헤더값이 누락되었습니다.|400|
+|`H003`|필수 입력값이 누락되었습니다.|400|
+|`Z001`|업무 처리 중 예외적 오류가 발생하였습니다.|500|
+
+--
+끝
