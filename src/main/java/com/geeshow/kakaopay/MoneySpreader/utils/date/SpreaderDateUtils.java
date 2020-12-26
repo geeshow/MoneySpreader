@@ -16,7 +16,7 @@ public class SpreaderDateUtils {
 
     /**
      * 두 날짜의 일수 차이를 계산.
-     * 한편으로 계산 함. (ex. from 20190202, to 20190203 -> result 1)
+     * 한편으로 계산 함. (ex. from 20190202, to 20190203, result 1)
      * from/to 날짜가 같을 경우 0을 리턴 함.
      * @param from
      * @param to
@@ -50,11 +50,11 @@ public class SpreaderDateUtils {
 
     /**
      * 두 날짜의 일수 차이를 계산.
-     * 양편으로 계산 함. (ex. from 20190202, to 20190203 -> result 2)
+     * 양편으로 계산 함. (ex. from 20190202, to 20190203, result 2)
      * from/to 날짜가 같을 경우 1을 리턴 함.
      * @param from
      * @param to
-     * @return 두 날짜의 일수 차이. 결과 > 0. 결과는 절대값으로 음수와 0은 포함 안됨.
+     * @return 두 날짜의 일수 차이. 결과: 0. 결과는 절대값으로 음수와 0은 포함 안됨.
      */
     public static int getNumberOfDaysClosed(String from, String to) {
         int numberOfDays = Math.abs(getNumberOfDays(from, to));

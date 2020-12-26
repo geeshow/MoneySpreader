@@ -12,12 +12,12 @@
 [[overview]]
 = 개요
 
-카카오 페이 뿌리기 기능에 대한 가이드
+카카오 페이 뿌리기에 대한 API 가이드
 
 [[overview-http-verbs]]
 == HTTP 동사
 
-본 REST API에서 사용하는 HTTP 동사(verbs)는 가능한한 표준 HTTP와 REST 규약을 따르고 있습니다.
+본 REST API에서 사용하는 HTTP 동사(verbs)는 가능한한 표준 HTTP와 REST 규약을 따릅니다.
 
 |===
 | 동사 | 용례
@@ -66,20 +66,21 @@
 |===
 
 [[overview-errors]]
-== 오류
+== 오류 응답
 
-에러 응답이 발생했을 때 (상태 코드 >= 400), 본문에 해당 문제를 기술한 JSON 객체가 담겨있다. 에러 객체는 다음의 구조를 따른다.
+- 에러 응답이 발생했을 때 (상태 코드 >= 400), 오류에 해당하는 stack trace가 담겨있다.
+- 에러 객체는 다음의 구조를 따른다.
 
 include::{snippets}/errors/response-fields.adoc[]
 
-예를 들어, 잘못된 값으로 출금을 요청 했을 때 다음과 같은 `500 INTERNAL_SERVER_ERROR` 응답을 받는다.
+예를 들어, 누락된 헤더값으로 요청을 했을 때 다음과 같은 `400 BAD REQUEST` 응답을 받는다.
 
 include::{snippets}/errors/http-response.adoc[]
 
 [[overview-hypermedia]]
 == 하이퍼미디어
 
-본 REST API는 하이퍼미디어와 사용하며 응답에 담겨있는 리소스는 다른 리소스에 대한 링크를 가지고 있다.
+본 REST API는 하이퍼미디어를 사용하며 응답에 담겨있는 리소스는 다른 리소스에 대한 링크를 가지고 있다.
 응답은 http://stateless.co/hal_specification.html[Hypertext Application from resource to resource. Language (HAL)] 형식을 따른다.
 링크는 `_links`라는 키로 제공한다. 본 API의 사용자(클라이언트)는 URI를 직접 생성하지 않아야 하며, 리소스에서 제공하는 링크를 사용해야 한다.
 
@@ -87,134 +88,36 @@ include::{snippets}/errors/http-response.adoc[]
 = 리소스
 
 [[resources-index]]
-== 인덱스
+== 카카오톡 뿌리기
 
-인덱스는 서비스 진입점을 제공한다.
+뿌리기는 카카오톡의 기능으로 대화방의 사용자들에게 무작위의 금액을 나눠줄때 사용하는 API이다.
 
+[[resources-headers]]
+=== 뿌리기 공통 Headers
 
-[[resources-index-access]]
-=== 인덱스 조회
+뿌리기 모든 API는 아래의 공통된 Header가 요구된다.
 
-`GET` 요청을 사용하여 인덱스에 접근할 수 있다.
+operation::spreader[snippets='request-headers']
 
-operation::index[snippets='curl-request,response-body,http-response,links']
+[[resources-spreader]]
+=== 뿌리기 등록 API
 
-[[resources-customers]]
-== 고객
+`POST` 요청을 사용하여 뿌리기를 만들 수 있으며, 뿌리기 token을 생성한다.
 
-고객 리소스는 고객정보를 만들거나 조회할 때 사용한다.
+operation::spreader[snippets='request-fields,response-fields,links,http-request,http-response']
 
-[[resources-customer-dto]]
-=== 고객 목록 조회
+[[resources-read]]
+=== 뿌리기 조회 API
 
-`GET` 요청을 사용하여 서비스의 모든 고객정보를 조회할 수 있다.
+`GET` 요청을 사용하여 뿌리기를 상태를 조회할 수 있으며, 뿌리기 token이 요구된다.
 
-operation::customer-dto[snippets='response-fields,curl-request,http-response,links']
+operation::read[snippets='path-parameters,response-fields,links,http-request,http-response']
 
-[[resources-customer-create]]
-=== 고객정보 생성
+[[resources-receipt]]
+=== 받기 API
 
-`POST` 요청을 사용해서 새 고객정보를 만들 수 있다.
+`PUT` 요청을 사용하여 뿌리기를 수령할 수 있으며, 뿌리기 token이 요구된다.
 
-operation::create-customer[snippets='request-fields,curl-request,http-request,request-headers,http-response,response-headers,response-fields,links']
-
-[[resources-customer-get]]
-=== 고객 조회
-
-`Get` 요청을 사용해서 기존 고객정보 하나를 조회할 수 있다.
-
-operation::get-customer[snippets='request-parameters,curl-request,http-request,http-response,links']
-
-[[resources-customers-update]]
-=== 고객정보 수정
-
-`PUT` 요청을 사용해서 기존 고객정보를 수정할 수 있다.
-
-operation::update-customer[snippets='request-fields,curl-request,http-response,links']
-
-[[resources-branches-create]]
-=== 지점 생성
-
-`POST` 요청을 사용해서 새 지점을 만들 수 있다.
-
-operation::create-branch[snippets='request-fields,curl-request,http-request,request-headers,http-response,response-headers,response-fields,links']
-
-[[resources-branches-dto]]
-=== 지점 목록 조회
-
-`GET` 요청을 사용하여 서비스의 모든 지점정보를 조회할 수 있다.
-
-operation::get-branches[snippets='response-fields,curl-request,http-response,links']
-
-[[resources-branch-get]]
-=== 지점 조회
-
-`Get` 요청을 사용해서 기존 지점 하나를 조회할 수 있다.
-
-operation::get-branch[snippets='curl-request,http-request,http-response,response-body,response-fields,response-headers,links']
-
-[[resources-branch-update]]
-=== 지점정보 수정
-
-`PUT` 요청을 사용해서 기존 지점정보를 수정할 수 있다.
-
-operation::update-branch[snippets='request-fields,curl-request,http-response,links']
-
-[[resources-accounts-create]]
-=== 계좌 생성
-
-`POST` 요청을 사용해서 새 계좌를 만들 수 있다.
-
-operation::create-account[snippets='request-fields,curl-request,http-request,request-headers,http-response,response-headers,response-fields,links']
-
-[[resources-accounts-dto]]
-=== 계좌 목록 조회
-
-`GET` 요청을 사용하여 서비스의 모든 계좌정보를 조회할 수 있다.
-
-operation::query-accounts[snippets='response-fields,curl-request,http-response,links']
-
-[[resources-account-get]]
-=== 계좌 정보 조회
-
-`Get` 요청을 사용해서 계좌 정보 하나를 조회할 수 있다.
-
-operation::get-account[snippets='curl-request,http-request,http-response,response-body,response-fields,response-headers,links']
-
-[[resources-account-deposit]]
-=== 계좌 입금 요청
-
-`PUT` 요청을 사용해서 해당 계좌에 입금을 할 수 있다.
-
-operation::account-deposit[snippets='request-body,curl-request,http-response,links']
-
-[[resources-account-withdraw]]
-=== 계좌 출금 요청
-
-`PUT` 요청을 사용해서 해당 계좌에 출금을 할 수 있다.
-
-operation::account-withdraw[snippets='request-body,curl-request,http-response,links']
-
-[[resources-get-trade-dto]]
-=== 계좌 거래내역 조회
-
-`GET` 요청을 사용해서 해당 계좌의 거래내역을 조회 할 수 있다.
-
-operation::query-trade[snippets='curl-request,http-request,http-response,response-body,response-fields,response-headers,links']
-
-[[resources-interest-calculate]]
-=== 이자 금액 예상 조회
-
-`GET` 요청을 사용해서 해당 계좌의 이자계산을 조회 할 수 있다.
-
-operation::interest-calculate[snippets='curl-request,http-request,http-response,response-body,response-fields,response-headers,links']
-
-[[resources-interest-list]]
-=== 이자지급 내역 조회
-
-`GET` 요청을 사용해서 해당 계좌의 이자지급내역을 조회 할 수 있다.
-
-operation::interest-list[snippets='curl-request,http-request,http-response,response-body,response-fields,response-headers,links']
-
+operation::receipt[snippets='path-parameters,response-fields,links,http-request,http-response']
 
 

@@ -123,6 +123,7 @@ public class ReadApiTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
                 .andExpect(jsonPath("status").value(HttpStatus.NOT_FOUND.name()))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -189,6 +190,7 @@ public class ReadApiTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
                 .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -218,6 +220,7 @@ public class ReadApiTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
                 .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;
@@ -248,6 +251,7 @@ public class ReadApiTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
                 .andExpect(jsonPath("status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("message").exists())
                 .andExpect(jsonPath("detailMessage").exists())
         ;

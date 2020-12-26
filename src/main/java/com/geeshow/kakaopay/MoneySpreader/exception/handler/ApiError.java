@@ -13,6 +13,7 @@ import java.util.List;
 public class ApiError {
     private final LocalDateTime timestamp;
     private final HttpStatus status;
+    private final int statusCode;
     private final String message;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -24,20 +25,17 @@ public class ApiError {
     public ApiError(HttpStatus status, String message) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
+        this.statusCode = status.value();
         this.message = message;
     }
 
     public ApiError(HttpStatus status, String message, Throwable e) {
-        this.timestamp = LocalDateTime.now();
-        this.status = status;
-        this.message = message;
+        this(status, message);
         this.detailMessage = e.toString();
     }
 
     public ApiError(HttpStatus status, String message, Throwable e, List<Detail> detailErrors) {
-        this.timestamp = LocalDateTime.now();
-        this.status = status;
-        this.message = message;
+        this(status, message);
         this.detailMessage = e.toString();
         this.detailErrors = detailErrors;
     }

@@ -106,6 +106,7 @@ public class SpreaderApiTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
                 .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.value()))
                 .andExpect(jsonPath("message").value(HttpErrorMessages.INVALID_BODY_DATA))
                 .andExpect(jsonPath("detailMessage").exists())
                 .andExpect(jsonPath("detailErrors[0].field").value("number"))
