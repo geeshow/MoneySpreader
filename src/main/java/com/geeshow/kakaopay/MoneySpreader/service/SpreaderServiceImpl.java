@@ -62,7 +62,7 @@ public class SpreaderServiceImpl implements SpreaderService {
                 )
                 .build();
 
-        // 뿌리기 티켓 등록(with 출금 처리)
+        // 뿌리기 티켓 등록
         spreader.registerTickets(ticketGenerator);
 
         return spreaderRepository.save(spreader);
@@ -80,7 +80,7 @@ public class SpreaderServiceImpl implements SpreaderService {
         if ( usersInRoom.size() <= ticketCount )
             throw new ExceedSpreadTicketCountException(usersInRoom.size() - 1);
 
-        if (amount < ticketCount)
+        if (amount < ticketCount * SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
             throw new NotEnoughSpreadAmountException(amount, ticketCount);
     }
 
