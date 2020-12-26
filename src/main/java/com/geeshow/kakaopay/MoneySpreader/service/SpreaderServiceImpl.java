@@ -39,6 +39,13 @@ public class SpreaderServiceImpl implements SpreaderService {
         // 출금 처리
         kakaoUser.withdraw(amount);
 
+        // 뿌리기 티켓 생성
+        RandomTicketGenerator ticketGenerator = RandomTicketGenerator.builder()
+                .amount(amount)
+                .count(ticketCount)
+                .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
+                .build();
+
         // 뿌리기 생성
         Spreader spreader = Spreader.builder()
                 .roomId(roomId)
@@ -50,13 +57,6 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .token(
                         generateUniqueTokenInRoom(roomId, SpreaderConstant.START_RECURSICE_COUNT)
                 )
-                .build();
-
-        // 뿌리기 티켓 생성
-        RandomTicketGenerator ticketGenerator = RandomTicketGenerator.builder()
-                .amount(amount)
-                .count(ticketCount)
-                .minValue(SpreaderConstant.MINIMUM_SPREAD_AMOUNT)
                 .build();
 
         // 뿌리기 티켓 등록(with 출금 처리)
