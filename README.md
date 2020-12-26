@@ -43,7 +43,15 @@
   - null을 사용하지 않음(Optional 활용).
   - DTO Naming 규칙 : [요청/응답] + 메소드명 + DTO
   - Exception은 Controller/Service/Domain별로 구분해서 사용한다.
-  
+
+## 설계 내용  
+### 1. DB 모델링
+![ExceptionClass](https://user-images.githubusercontent.com/20357042/103153774-45874b00-47d6-11eb-9529-5b1fb0dfb00f.png)
+- Entity를 단순히 구성하기 위해 대화방 Table 없이 구성
+
+### 2. Exception Class Diagram
+![ExceptionClass](https://user-images.githubusercontent.com/20357042/103153291-dc520880-47d2-11eb-8526-6524b2f96c97.png)
+- Exception은 크게 Entity조회 오류와 데이터 검증 오류로 분류 함.
  
 ## 기능별 플로어
 ### 1. 뿌리기
@@ -55,8 +63,6 @@
 ### 3. 조회
 ![조회플로어](https://user-images.githubusercontent.com/20357042/103145231-2d81de00-477a-11eb-8e53-43bc96b1d88e.png)
 
-## Exception Class Diagram
-![Exception Class Diagram](https://user-images.githubusercontent.com/20357042/103152950-356c6d00-47d0-11eb-94aa-bee9b77daf52.png)
 
 ## 카카오페이 뿌리기 REST API Guide
 

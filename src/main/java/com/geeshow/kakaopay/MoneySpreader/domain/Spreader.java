@@ -31,10 +31,12 @@ public class Spreader extends BaseEntity {
     private Long amount;
 
     // 뿌리기 방 번호
-    @Column private String roomId;
+    @Column(nullable = false)
+    private String roomId;
 
     // 뿌리기 사용자 ID
-    @Column private Long spreaderUserId;
+    @Column(nullable = false)
+    private Long spreaderUserId;
 
     // 뿌리기 건수
     @Column(nullable = false)
