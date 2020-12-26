@@ -6,7 +6,8 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomNotFoundException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundUserInRoomEntityException;
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.AlreadyReceivedTicketException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ExpiredTicketReceiptException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ReceiveOwnTicketException;
@@ -179,8 +180,8 @@ public class ReceiptApiTest {
         AlreadyReceivedTicketException exception = assertThrows(AlreadyReceivedTicketException.class
                 , ()-> spreaderService.receive(_ROOM_ID, _RECEIVER_USER_ID1, token));
 
-        String message = exception.getMessage();
-        assertThat(message).contains("뿌린 돈은 한번만 수령 가능 합니다.");
+        assertThat(exception.getMessage()).contains(ErrorCode.AlreadyReceivedTicketException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.AlreadyReceivedTicketException.getCode());
     }
 
     @Test
@@ -196,8 +197,8 @@ public class ReceiptApiTest {
         ReceiveOwnTicketException exception = assertThrows(ReceiveOwnTicketException.class
                 , ()-> spreaderService.receive(_ROOM_ID, _USER_ID, token));
 
-        String message = exception.getMessage();
-        assertThat(message).contains("본인이 뿌린 돈은 본인이 받을 수 없습니다.");
+        assertThat(exception.getMessage()).contains(ErrorCode.ReceiveOwnTicketException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.ReceiveOwnTicketException.getCode());
     }
 
 
@@ -219,11 +220,11 @@ public class ReceiptApiTest {
         String token = spreaderService.spread(anotherRoom, anotherSpreader.getId(), 10000, 1).getToken();
 
         //when & then : 다른방 사용자가 ANOTHER_ROOM_10 방의 번호와 토큰으로 수취를 시도하여 오류.
-        NotFoundRoomNotFoundException exception = assertThrows(NotFoundRoomNotFoundException.class
+        NotFoundUserInRoomEntityException exception = assertThrows(NotFoundUserInRoomEntityException.class
                 , ()-> spreaderService.receive(anotherRoom, _RECEIVER_USER_ID1, token));
 
-        String message = exception.getMessage();
-        assertThat(message).contains("해당 룸에 존재하지 않는 사용자 ID입니다.");
+        assertThat(exception.getMessage()).contains(ErrorCode.NotFoundUserInRoomEntityException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.NotFoundUserInRoomEntityException.getCode());
     }
 
 
@@ -242,7 +243,8 @@ public class ReceiptApiTest {
         ExpiredTicketReceiptException exception = assertThrows(ExpiredTicketReceiptException.class
                 , ()-> spreaderService.receive(_ROOM_ID, _RECEIVER_USER_ID1, spreader.getToken()));
 
-        String message = exception.getMessage();
-        assertThat(message).contains("뿌리기 수령 가능 시간이 초과했습니다.");
+        assertThat(exception.getMessage()).contains(ErrorCode.ExpiredTicketReceiptException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.ExpiredTicketReceiptException.getCode());
+
     }
 }

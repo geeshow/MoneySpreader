@@ -1,10 +1,11 @@
 package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
 import com.geeshow.kakaopay.MoneySpreader.exception.BusinessException;
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 
 public class InvalidException extends BusinessException {
 
-    public InvalidException(String message) {
-        super(message);
+    public InvalidException(ErrorCode code, String ...values ) {
+        super(code, values);
     }
 }

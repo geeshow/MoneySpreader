@@ -1,12 +1,12 @@
 package com.geeshow.kakaopay.MoneySpreader.requirement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.geeshow.kakaopay.MoneySpreader.constant.HttpErrorMessages;
 import com.geeshow.kakaopay.MoneySpreader.constant.SpreaderConstant;
 import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.dto.SpreaderDto;
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.SpreaderRepository;
@@ -20,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -105,8 +104,9 @@ public class SpreaderApiTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("timestamp").exists())
-                .andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.value()))
-                .andExpect(jsonPath("message").value(HttpErrorMessages.INVALID_BODY_DATA))
+                .andExpect(jsonPath("status").value(ErrorCode.MethodArgumentNotValidException.getStatus().value()))
+                .andExpect(jsonPath("message").value(ErrorCode.MethodArgumentNotValidException.getMessage()))
+                .andExpect(jsonPath("code").value(ErrorCode.MethodArgumentNotValidException.getCode()))
                 .andExpect(jsonPath("detailMessage").exists())
                 .andExpect(jsonPath("detailErrors[0].field").value("number"))
         ;

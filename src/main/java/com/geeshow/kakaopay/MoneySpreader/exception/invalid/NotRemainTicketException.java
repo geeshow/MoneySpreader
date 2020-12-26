@@ -1,7 +1,11 @@
 package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
+
 public class NotRemainTicketException extends InvalidException {
     public NotRemainTicketException(String roomId) {
-        super("뿌려진 모든 금액이 소진되었습니다. roomId:" + roomId);
+        super(ErrorCode.NotRemainTicketException,
+                "대화방 ID:" + roomId
+        );
     }
 }

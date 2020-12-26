@@ -5,8 +5,9 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserNotFoundException;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomNotFoundException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserEntityException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomEntityException;
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ExceedSpreadTicketCountException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.ExpiredReadSpreaderException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.NotRemainTicketException;
@@ -167,13 +168,14 @@ class SpreaderServiceTest {
         long notExistUserId = 12130192019L;
 
         //when
-        NotFoundKakaoUserNotFoundException exception = assertThrows(NotFoundKakaoUserNotFoundException.class
+        NotFoundKakaoUserEntityException exception = assertThrows(NotFoundKakaoUserEntityException.class
                 , ()-> spreaderService.spread(_ROOM_ID, notExistUserId, amount, ticketCount));
-        String message = exception.getMessage();
 
         //then
-        assertThat(message).contains("존재하지 않는 사용자 ID입니다.");
-   }
+        assertThat(exception.getMessage()).contains(ErrorCode.NotFoundKakaoUserEntityException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.NotFoundKakaoUserEntityException.getCode());
+
+    }
 
 
     @Test
@@ -185,12 +187,12 @@ class SpreaderServiceTest {
         String notExistRoomId = "testtesttest111";
 
         //when
-        NotFoundRoomNotFoundException exception = assertThrows(NotFoundRoomNotFoundException.class
+        NotFoundRoomEntityException exception = assertThrows(NotFoundRoomEntityException.class
                 , ()-> spreaderService.spread(notExistRoomId, _USER_ID, amount, ticketCount));
-        String message = exception.getMessage();
 
         //then
-        assertThat(message).contains("존재하지 않는 룸 입니다.");
+        assertThat(exception.getMessage()).contains(ErrorCode.NotFoundRoomEntityException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.NotFoundRoomEntityException.getCode());
     }
 
     @Test
@@ -203,9 +205,9 @@ class SpreaderServiceTest {
         //when & then
         ExceedSpreadTicketCountException exception = assertThrows(ExceedSpreadTicketCountException.class
                 , ()-> spreaderService.spread(_ROOM_ID, _USER_ID, amount, ticketCount));
-        String message = exception.getMessage();
 
-        assertThat(message).contains("뿌리기 가능 건수 초과.");
+        assertThat(exception.getMessage()).contains(ErrorCode.ExceedSpreadTicketCountException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.ExceedSpreadTicketCountException.getCode());
     }
 
     @Test
@@ -248,8 +250,9 @@ class SpreaderServiceTest {
         //when & then
         ExpiredReadSpreaderException exception = assertThrows(ExpiredReadSpreaderException.class
                 , ()-> spreaderService.read(_ROOM_ID, _USER_ID, spreader.getToken()));
-        String message = exception.getMessage();
-        assertThat(message).contains("뿌리기 조회 가능일이 만료되었습니다.");
+
+        assertThat(exception.getMessage()).contains(ErrorCode.ExpiredReadSpreaderException.getMessage());
+        assertThat(exception.getCode()).isEqualTo(ErrorCode.ExpiredReadSpreaderException.getCode());
     }
 
 

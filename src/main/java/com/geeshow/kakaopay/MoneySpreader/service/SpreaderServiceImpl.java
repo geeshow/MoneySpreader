@@ -5,9 +5,10 @@ import com.geeshow.kakaopay.MoneySpreader.domain.KakaoUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.RoomUser;
 import com.geeshow.kakaopay.MoneySpreader.domain.Spreader;
 import com.geeshow.kakaopay.MoneySpreader.domain.SpreaderTicket;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserNotFoundException;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomNotFoundException;
-import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundSpreaderException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundKakaoUserEntityException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundRoomEntityException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundSpreaderEntityException;
+import com.geeshow.kakaopay.MoneySpreader.exception.entity.NotFoundUserInRoomEntityException;
 import com.geeshow.kakaopay.MoneySpreader.exception.invalid.*;
 import com.geeshow.kakaopay.MoneySpreader.repository.KakaoUserRepository;
 import com.geeshow.kakaopay.MoneySpreader.repository.RoomUserRepository;
@@ -100,7 +101,7 @@ public class SpreaderServiceImpl implements SpreaderService {
     public Spreader read(String roomId, long userId, String token) {
 
         Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
-                .orElseThrow(() -> new NotFoundSpreaderException(token, roomId));
+                .orElseThrow(() -> new NotFoundSpreaderEntityException(token, roomId));
 
         if ( !spreader.isSpreader(userId) )
             throw new NotAllowReadTicketException(userId);
@@ -142,7 +143,7 @@ public class SpreaderServiceImpl implements SpreaderService {
 
         // 뿌리기 조회
         Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
-                .orElseThrow(() -> new NotFoundSpreaderException(token, roomId));
+                .orElseThrow(() -> new NotFoundSpreaderEntityException(token, roomId));
 
         // 수취 만료 시간 확인
         if ( spreader.isExpiredReceive() )
@@ -165,14 +166,14 @@ public class SpreaderServiceImpl implements SpreaderService {
     private void checkUserInRoom(String roomId, long userId) {
         // 사용자 존재 체크
         KakaoUser kakaoUser = kakaoUserRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundKakaoUserNotFoundException(userId));
+                .orElseThrow(() -> new NotFoundKakaoUserEntityException(userId));
 
         // 룸 존재 체크
         ArrayList<RoomUser> usersInRoom = roomUserRepository.findByRoomId(roomId)
-                .orElseThrow(() -> new NotFoundRoomNotFoundException(roomId));
+                .orElseThrow(() -> new NotFoundRoomEntityException(roomId));
 
         // 룸 사용자 체크
         usersInRoom.stream().filter(user -> user.getId() == kakaoUser.getId()).findFirst()
-                .orElseThrow(() -> new NotFoundRoomNotFoundException(roomId, kakaoUser));
+                .orElseThrow(() -> new NotFoundUserInRoomEntityException(roomId, kakaoUser.getId()));
     }
 }

@@ -1,9 +1,12 @@
 package com.geeshow.kakaopay.MoneySpreader.exception.invalid;
 
+import com.geeshow.kakaopay.MoneySpreader.exception.handler.ErrorCode;
+
 public class ExpiredTicketReceiptException extends InvalidException {
 
     public ExpiredTicketReceiptException(int minutes) {
-
-        super("뿌리기 수령 가능 시간이 초과했습니다. 뿌린 후 :"+ minutes + "분");
+        super(ErrorCode.ExpiredTicketReceiptException,
+                "뿌린 후 "+ minutes + "분"
+        );
     }
 }
