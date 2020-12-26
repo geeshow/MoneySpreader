@@ -16,22 +16,22 @@ MoneySpreader
 
 ## 핵심 문제해결 전략
 ### 가. 핵심 요구사항 해결 방법
- 1. 다수의 서버, 다수의 인스턴스에 대한 데이터 정합성
+##### 1. 다수의 서버, 다수의 인스턴스에 대한 데이터 정합성
   - `Service Transactional Annotation` 적용
   - `JPA Version Lock` 사용
- 2. 토큰 유틸리티 개발
+##### 2. 토큰 유틸리티 개발
   - `SecureRandom`으로 예측 불가능한 난수 값 생성.
- 3. 티켓(뿌리기용) 생성자 유틸리티 개발 
+##### 3. 티켓(뿌리기용) 생성자 유틸리티 개발 
   - 주어진 금액을 주어진 건수로 랜덤하게 나누는 유틸리티.
   - 생성된 티켓들을 다시 한번 더 무작위 Sorting(`Comparable` 인터페이스 적용).
- 4. 실패 응답 처리
+##### 4. 실패 응답 처리
   - `RestControllerAdvice` 적용
   - 오류정보를 관리하는 `ErrorCode` enum을 생성 -> RestControllerAdvice 로직을 단순화 함.
   - Exception은 오류 유형에 따라 계층적 분리 
      
 ### 나. 개발규칙 정의
 ##### 1. 상수 사용
-  - 같은 상수를 반복 사용 자제.
+  - 동일한 상수를 반복적으로 사용하지 않도록 한다.
   - Service, Controller에서만 사용.
   - 유틸리티성 패키지는 별도의 상수 사용.
 ##### 2. Controller 컴포넌트의 역할
@@ -56,7 +56,7 @@ MoneySpreader
 
 ### 2. Exception Class Diagram
 ![ExceptionClass](https://user-images.githubusercontent.com/20357042/103153291-dc520880-47d2-11eb-8526-6524b2f96c97.png)
-- Exception은 크게 Entity조회 오류와 데이터 검증 오류로 분류 함.
+> Exception은 크게 두 분류로 `Entity조회 오류`, `데이터 검증 오류`로 분류하였다.
  
 ## 기능별 플로어
 ### 1. 뿌리기
