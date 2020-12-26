@@ -172,7 +172,7 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .orElseThrow(() -> new NotFoundRoomEntityException(roomId));
 
         // 룸 사용자 체크
-        usersInRoom.stream().filter(user -> user.getId() == kakaoUser.getId()).findFirst()
+        usersInRoom.stream().filter(room -> room.getKakaoUser().getId() == kakaoUser.getId()).findFirst()
                 .orElseThrow(() -> new NotFoundUserInRoomEntityException(roomId, kakaoUser.getId()));
     }
 }
