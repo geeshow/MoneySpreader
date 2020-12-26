@@ -4,33 +4,30 @@ MoneySpreader
 ## 목차
 * [개발 환경](#개발-환경)
 * [핵심 문제해결 전략](#핵심-문제해결-전략)
-* [- 가. 핵심 요구사항 해결 방법](#가.-핵심-요구사항-해결-방법)
-* [- 나. 개발규칙 정의](#나.-개발규칙-정의)
 * [설계 내용 ](#설계-내용 )
 * [기능별 플로어](#기능별-플로어)
 * [카카오페이 뿌리기 REST API Guide](#카카오페이-뿌리기-REST-API-Guide)
 
 ## 개발 환경
-- Language: Java 11
-- Framework: Spring Boot 2.3.7.RELEASE
-- Database: H2
-- Dependencies: jpa / hateoas / mapstruct / lombok / restdocs
+- Language: `Java 11`
+- Framework: `Spring Boot 2.3.7.RELEASE`
+- Database: `H2`
+- Dependencies: `jpa` `hateoas` `mapstruct` `lombok` `restdocs`
 
 ## 핵심 문제해결 전략
 ### 가. 핵심 요구사항 해결 방법
  1. 다수의 서버, 다수의 인스턴스에 대한 데이터 정합성
   - `Service Transactional Annotation` 적용
   - `JPA Version Lock` 사용
- 1. 토큰 유틸리티 개발
+ 2. 토큰 유틸리티 개발
   - `SecureRandom`으로 예측 불가능한 난수 값 생성.
- 1. 티켓(뿌리기용) 생성자 유틸리티 개발 
+ 3. 티켓(뿌리기용) 생성자 유틸리티 개발 
   - 주어진 금액을 주어진 건수로 랜덤하게 나누는 유틸리티.
   - 생성된 티켓들을 다시 한번 더 무작위 Sorting(`Comparable` 인터페이스 적용).
- 1. 조회 및 받기 유효시간
-  - 조회유효시간, 받기유효시간 컬럼을 추가
- 1. 실패 응답 처리
+ 4. 실패 응답 처리
   - `RestControllerAdvice` 적용
-  - Exception을 HTTP status 단위로 계층적 분리 
+  - 오류정보를 관리하는 `ErrorCode` enum을 생성 -> RestControllerAdvice 로직을 단순화 함.
+  - Exception은 오류 유형에 따라 계층적 분리 
      
 ### 나. 개발규칙 정의
 ##### 1. 상수 사용
@@ -64,13 +61,16 @@ MoneySpreader
 ## 기능별 플로어
 ### 1. 뿌리기
 ![뿌리기플로어](https://user-images.githubusercontent.com/20357042/103145026-c7478c00-4776-11eb-805f-572e5487b27f.png)
--- 
+> 뿌리기의 주요 로직은 난수 발생으로 봤으며,  
+> 이에 관련된 유틸리티 Ticket Generator와 Token Generator를 개발하였다.
 ### 2. 받기
 ![받기플로어](https://user-images.githubusercontent.com/20357042/103145712-07603c00-4782-11eb-9994-2a4d41907298.png)
---
+> 받기는 데이터 검증과 수령하지 않은 뿌리기 구하기 로직에 중점을 두었다.  
+> 데이터 정합성을 위해 JPA Version Lock을 적용했다.
 ### 3. 조회
 ![조회플로어](https://user-images.githubusercontent.com/20357042/103145231-2d81de00-477a-11eb-8e53-43bc96b1d88e.png)
---
+> 조회 업무는 응답 데이터의 맵핑이 핵심으로 `MapStruct`의 활용에 중점을 두었다.
+
 
 ## 카카오페이 뿌리기 REST API Guide
 
@@ -224,9 +224,9 @@ Content-Length: 291
   }
 }
 ```          
---
+
 ### 라. 오류응답
-##### 1. 응답 Response
+#### 1. 응답 Response
 
 |Path|Type|Description|
 |---|---|---|
@@ -258,7 +258,7 @@ Content-Length: 1090
 ]}
 ```
 
-##### 2. 업무 오류 코드 명세
+#### 2. 업무 오류 코드 명세
 | 코드 | 내용 | HTTP STATUS |
 | ---|---|---|
 |`E001`|존재하지 않는 사용자 ID입니다.|404|
@@ -278,5 +278,4 @@ Content-Length: 1090
 |`H003`|필수 입력값이 누락되었습니다.|400|
 |`Z001`|업무 처리 중 예외적 오류가 발생하였습니다.|500|
 
---
-끝
+
