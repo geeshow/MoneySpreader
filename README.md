@@ -42,8 +42,7 @@
  
 ## 기능별 플로어
 ### 1. 뿌리기
- Service -> KakaoUser 출금 -> TokenGenerator 토큰생성 -> TicketGenerator 무작위
- -> Spreader -> Ticket 등록
+
  
 ### 2. 받기
 
