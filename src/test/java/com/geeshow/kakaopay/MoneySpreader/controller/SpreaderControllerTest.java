@@ -67,35 +67,28 @@ class SpreaderControllerTest {
     private long _RECEIVER_USER_ID1;
     private long _RECEIVER_USER_ID2;
     private long _RECEIVER_USER_ID3;
-    private String _ROOM_ID = "X-ROOM-ID-20";
+    private String _ROOM_ID = "X-ROOM-ID-94";
 
     @BeforeEach
     void setUp() {
 
-        // 뿌리기 사용자 등록
+        // 사용자 등록
         KakaoUser spreader = kakaoUserRepository.save(KakaoUser.builder().balance(1000000L).build());
+        KakaoUser receiver1 = kakaoUserRepository.save(KakaoUser.builder().balance(0L).build());
+        KakaoUser receiver2 = kakaoUserRepository.save(KakaoUser.builder().balance(0L).build());
+        KakaoUser receiver3 = kakaoUserRepository.save(KakaoUser.builder().balance(0L).build());
+
+        // 대화방 등록
         roomUserRepository.save(RoomUser.builder().kakaoUser(spreader).roomId(_ROOM_ID).build());
+        roomUserRepository.save(RoomUser.builder().kakaoUser(receiver1).roomId(_ROOM_ID).build());
+        roomUserRepository.save(RoomUser.builder().kakaoUser(receiver2).roomId(_ROOM_ID).build());
+        roomUserRepository.save(RoomUser.builder().kakaoUser(receiver3).roomId(_ROOM_ID).build());
 
-        // 받는 사용자 등록
-        _RECEIVER_USER_ID1 = roomUserRepository.save(
-                RoomUser.builder().kakaoUser(
-                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
-                ).roomId(_ROOM_ID).build()
-        ).getId();
-
-        _RECEIVER_USER_ID2 = roomUserRepository.save(
-                RoomUser.builder().kakaoUser(
-                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
-                ).roomId(_ROOM_ID).build()
-        ).getId();
-
-        _RECEIVER_USER_ID3 = roomUserRepository.save(
-                RoomUser.builder().kakaoUser(
-                        kakaoUserRepository.save(KakaoUser.builder().balance(0L).build())
-                ).roomId(_ROOM_ID).build()
-        ).getId();
-
+        // 테스트 변수 설정
         _USER_ID = spreader.getId();
+        _RECEIVER_USER_ID1 = receiver1.getId();
+        _RECEIVER_USER_ID2 = receiver2.getId();
+        _RECEIVER_USER_ID3 = receiver3.getId();
     }
 
     @Test

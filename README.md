@@ -4,6 +4,7 @@ MoneySpreader
 ## 목차
 * [개발 환경](#개발-환경)
 * [핵심 문제해결 전략](#핵심-문제해결-전략)
+* [테스트 데이터](#테스트-데이터)
 * [설계 내용 ](#설계-내용 )
 * [기능별 플로어](#기능별-플로어)
 * [카카오페이 뿌리기 REST API Guide](#카카오페이-뿌리기-REST-API-Guide)
@@ -49,6 +50,18 @@ MoneySpreader
   - DTO Naming 규칙 : [요청/응답] + 메소드명 + DTO
   - Exception은 Controller/Service/Domain별로 구분해서 사용한다.
 
+## 테스트 데이터
+| X-ROOM-ID| X-USER-ID |
+| --- | --- |
+| TEST_ROOM_1 | 1 |
+| TEST_ROOM_1 | 2 |
+| TEST_ROOM_1 | 3 |
+| TEST_ROOM_1 | 4 |
+| TEST_ROOM_1 | 5 |
+| TEST_ROOM_2 | 1 |
+| TEST_ROOM_2 | 6 |
+| TEST_ROOM_2 | 7 |
+| TEST_ROOM_2 | 8 |
 ## 설계 내용  
 ### 1. DB 모델링
 ![ExceptionClass](https://user-images.githubusercontent.com/20357042/103153774-45874b00-47d6-11eb-9529-5b1fb0dfb00f.png)
