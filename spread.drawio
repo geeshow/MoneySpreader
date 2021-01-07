@@ -1,32 +1,32 @@
-<mxfile host="app.diagrams.net" modified="2020-12-26T03:15:18.352Z" agent="5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36" etag="mA4hFQx_HdF9BmUWxRI1" version="14.1.2" type="github">
+<mxfile host="app.diagrams.net" modified="2021-01-07T09:15:04.859Z" agent="5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36" etag="i0goMaNhkqAkzxF0_O1y" version="14.1.3" type="github">
   <diagram name="Page-1" id="13e1069c-82ec-6db2-03f1-153e76fe0fe0">
-    <mxGraphModel dx="1125" dy="589" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1126" dy="699" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="7baba1c4bc27f4b0-2" value="사용자 Entity" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="1" vertex="1">
-          <mxGeometry x="240" y="80" width="100" height="580" as="geometry" />
+          <mxGeometry x="240" y="80" width="100" height="530" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-10" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="7baba1c4bc27f4b0-2" vertex="1">
           <mxGeometry x="45" y="100" width="10" height="360" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-3" value="티켓 생성 Util" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="1" vertex="1">
-          <mxGeometry x="400" y="80" width="100" height="580" as="geometry" />
+          <mxGeometry x="400" y="80" width="100" height="530" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-13" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="7baba1c4bc27f4b0-3" vertex="1">
           <mxGeometry x="45" y="179" width="10" height="241" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-4" value="뿌리기 Entity" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="1" vertex="1">
-          <mxGeometry x="540" y="80" width="100" height="580" as="geometry" />
+          <mxGeometry x="540" y="80" width="100" height="530" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-5" value="Repository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="1" vertex="1">
-          <mxGeometry x="680" y="80" width="100" height="580" as="geometry" />
+          <mxGeometry x="680" y="80" width="100" height="530" as="geometry" />
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-21" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" vertex="1" parent="7baba1c4bc27f4b0-5">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-21" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="7baba1c4bc27f4b0-5" vertex="1">
           <mxGeometry x="45" y="480" width="10" height="40" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-8" value="뿌리기 Service" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="1" vertex="1">
-          <mxGeometry x="100" y="80" width="100" height="580" as="geometry" />
+          <mxGeometry x="100" y="80" width="100" height="530" as="geometry" />
         </mxCell>
         <mxCell id="7baba1c4bc27f4b0-9" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" parent="7baba1c4bc27f4b0-8" vertex="1">
           <mxGeometry x="45" y="100" width="10" height="400" as="geometry" />
@@ -65,7 +65,7 @@
             <mxPoint x="220" y="190" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-1" value="User return" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;" edge="1" parent="1">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-1" value="User return" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="155.0000000000001" y="219" as="targetPoint" />
             <Array as="points">
@@ -75,7 +75,7 @@
             <mxPoint x="284" y="219" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-11" value="뿌리기 Entity return" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;" edge="1" parent="1">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-11" value="뿌리기 Entity return" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="155.0000000000001" y="379.20000000000005" as="targetPoint" />
             <Array as="points">
@@ -84,19 +84,19 @@
             <mxPoint x="585" y="379.20000000000005" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-12" value="티켓 생성자/User&amp;nbsp;Entity 주입" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;" edge="1" parent="1">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-12" value="티켓 생성자/User&amp;nbsp;Entity 주입" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="155" y="419.7600000000001" as="sourcePoint" />
             <mxPoint x="585" y="419.7600000000001" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-14" value="Ticket List return" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;entryX=-0.031;entryY=0.784;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.951;exitY=0.987;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-14" value="Ticket List return" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;entryX=-0.031;entryY=0.784;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.951;exitY=0.987;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="585" y="500.05000000000007" as="targetPoint" />
             <mxPoint x="454.82" y="500" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-17" value="출금 요청" style="html=1;verticalAlign=bottom;endArrow=block;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;entryX=0.978;entryY=0.727;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-17" value="&lt;strike&gt;&lt;font color=&quot;#ff0000&quot;&gt;출금 요청&lt;/font&gt;&lt;/strike&gt;" style="html=1;verticalAlign=bottom;endArrow=block;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;edgeStyle=elbowEdgeStyle;elbow=vertical;entryX=0.978;entryY=0.727;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#FF0000;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="585" y="540.12" as="sourcePoint" />
             <mxPoint x="294.78" y="540" as="targetPoint" />
@@ -118,10 +118,16 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-20" value="save" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0.033;entryY=0.496;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="fO7a_FFpmHtgx1kZ53Yg-21">
+        <mxCell id="fO7a_FFpmHtgx1kZ53Yg-20" value="save" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0.033;entryY=0.496;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="fO7a_FFpmHtgx1kZ53Yg-21" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="155" y="579.5800000000002" as="sourcePoint" />
             <mxPoint x="585" y="579.5800000000002" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="JiRNK0ybI6avGokPvE2P-3" value="출금요청" style="html=1;verticalAlign=bottom;endArrow=block;labelBackgroundColor=none;fontFamily=Verdana;fontSize=12;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="540" as="sourcePoint" />
+            <mxPoint x="280" y="540" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
