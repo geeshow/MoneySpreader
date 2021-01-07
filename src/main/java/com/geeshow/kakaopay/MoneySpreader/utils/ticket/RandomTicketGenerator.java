@@ -19,6 +19,14 @@ public class RandomTicketGenerator implements TicketGenerator<Ticket> {
     private int minValue;
     private long leftAmount;
 
+    public static RandomTicketGenerator getGenerator(long amount, int count, int minValue) {
+        return RandomTicketGenerator.builder()
+                .amount(amount)
+                .count(count)
+                .minValue(minValue)
+                .leftAmount(amount - (count * minValue))
+                .build();
+    }
     /**
      * amount 범위 내에 무작위 금액의 티켓을 생성
      *

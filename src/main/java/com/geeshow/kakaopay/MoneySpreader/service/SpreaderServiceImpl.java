@@ -34,7 +34,6 @@ public class SpreaderServiceImpl implements SpreaderService {
     @Override
     @Transactional
     public Spreader spread(String roomId, long userId, long amount, int ticketCount) {
-
         validateSpread(roomId, userId, amount, ticketCount);
 
         KakaoUser kakaoUser = kakaoUserRepository.findById(userId).get();
@@ -130,7 +129,10 @@ public class SpreaderServiceImpl implements SpreaderService {
                 .orElseThrow(() -> new NotRemainTicketException(roomId));
 
         // 뿌리기 티켓 수취
-        receivableTicket.receiveTicket(kakaoUser);
+        long receiveAmount = receivableTicket.receiveTicket(kakaoUser);
+
+        // 입금 처리
+        kakaoUser.deposit(receiveAmount);
 
         return receivableTicket;
     }
