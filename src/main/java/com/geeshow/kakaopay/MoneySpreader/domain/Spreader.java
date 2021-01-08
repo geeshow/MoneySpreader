@@ -4,10 +4,7 @@ import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.stream.Collectors;
 public class Spreader extends BaseEntity {
 
     // 뿌리기 토큰
-    @Column(unique = true, nullable = false, length = 3)
+    @Column(nullable = false, length = 3)
     private String token;
 
     // 뿌리기 총 금액

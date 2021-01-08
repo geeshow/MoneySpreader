@@ -17,6 +17,9 @@ import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.RandomTicketGenerator;
 import com.geeshow.kakaopay.MoneySpreader.utils.token.SecureTokenGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +99,7 @@ public class SpreaderServiceImpl implements SpreaderService {
     }
 
     @Override
+    @Cacheable(value="spreader", key="#roomId + #token")
     public Spreader read(String roomId, long userId, String token) {
 
         Spreader spreader = spreaderRepository.findByRoomIdAndToken(roomId, token)
@@ -113,6 +117,7 @@ public class SpreaderServiceImpl implements SpreaderService {
     }
 
     @Override
+    @CacheEvict(value="spreader", key = "#roomId + #token")
     @Transactional
     public SpreaderTicket receive(String roomId, long receiverUserId, String token) {
 

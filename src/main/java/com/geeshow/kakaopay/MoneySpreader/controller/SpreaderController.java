@@ -71,6 +71,15 @@ public class SpreaderController {
         return ResponseEntity.ok(responseReadDto);
     }
 
+    @GetMapping("/empty")
+    public String readTest(
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_ROOM_ID) @NotBlank String roomID,
+            @RequestHeader(SpreaderConstant.HTTP_HEADER_USER_ID) @Positive int userId,
+            @PathVariable String token) {
+
+        return "ok";
+    }
+
     @PutMapping("/receipt/{token}")
     public ResponseEntity<ResponseReceiveDto> receive(
             @RequestHeader(SpreaderConstant.HTTP_HEADER_ROOM_ID) @NotBlank String roomID,
