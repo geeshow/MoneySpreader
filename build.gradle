@@ -42,6 +42,7 @@ dependencies {
 	}
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.2.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '2.3.7.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.3.7.RELEASE'
 }
 
 test {

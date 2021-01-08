@@ -1,10 +1,14 @@
 package com.geeshow.kakaopay.MoneySpreader.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.Ticket;
 import com.geeshow.kakaopay.MoneySpreader.utils.ticket.TicketGenerator;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

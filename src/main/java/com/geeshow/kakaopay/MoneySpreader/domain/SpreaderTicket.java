@@ -1,9 +1,11 @@
 package com.geeshow.kakaopay.MoneySpreader.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.geeshow.kakaopay.MoneySpreader.utils.date.SpreaderDateUtils;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Optional;
 
 @Entity
@@ -27,6 +29,7 @@ public class SpreaderTicket extends BaseEntity {
     // Spreader User ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spreader_id")
+    @JsonIgnore
     private Spreader spreader;
 
     public long receiveTicket(KakaoUser receiver) {
