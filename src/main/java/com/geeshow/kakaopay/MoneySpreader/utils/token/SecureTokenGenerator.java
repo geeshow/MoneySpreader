@@ -8,7 +8,8 @@ import java.util.stream.IntStream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SecureTokenGenerator {
-    public static String allowedStringForToken = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final String allowedStringForToken = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
     public static String generateToken(int length) {
         return new SecureRandom()
                 .ints(length, 0, allowedStringForToken.length())
